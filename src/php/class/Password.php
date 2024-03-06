@@ -1,5 +1,5 @@
 <?php
-namespace vagrant\TheBoringSocial\class;
+namespace vagrant\TheBoringSocial\php\class;
 
 
 class Password {

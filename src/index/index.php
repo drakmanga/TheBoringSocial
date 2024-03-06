@@ -1,7 +1,7 @@
 <?php 
 
-use vagrant\TheBoringSocial\class\Database;
-use vagrant\TheBoringSocial\class\Password;
+use vagrant\TheBoringSocial\php\class\Database;
+use vagrant\TheBoringSocial\php\class\Password;
 
 require "../../vendor/autoload.php";
 

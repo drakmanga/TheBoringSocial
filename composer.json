@@ -3,7 +3,7 @@
     "type": "project",
     "autoload": {
         "psr-4": {
-            "Vagrant\\TheBoringSocial\\": "src/"
+            "vagrant\\TheBoringSocial\\": "src/"
         }
     },
     "authors": [

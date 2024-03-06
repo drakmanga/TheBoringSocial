@@ -1,7 +1,7 @@
 <?php 
-use vagrant\TheBoringSocial\class\Database;
-use vagrant\TheBoringSocial\class\Password;
-use vagrant\TheBoringSocial\class\User;
+use vagrant\TheBoringSocial\php\class\Database;
+use vagrant\TheBoringSocial\php\class\Password;
+use vagrant\TheBoringSocial\php\class\User;
 
 require "../../vendor/autoload.php";
 
@@ -31,22 +31,18 @@ try {
 
         $dateTime= date("Y-m-d H:i:s");
 
-        (!User::validateAge($_POST["birthday"])) ? ($birthday = $_POST["birthdat"]) : ("echo 'devi essere maggiorenne per iscriverti'" . die);
+        !User::validateAge($_POST["birthday"]) ? ($birthday = $_POST["birthdat"]) : ("echo 'devi essere maggiorenne per iscriverti'" . die);
        
         if (array_key_exists("file", $_FILES)) {
-            $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser". $_FILES['file']['name'];
+            $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/". $_FILES['file']['name'];
             $image = "/photoUser/". $_FILES['file']['name'];
             move_uploaded_file($_FILES['file']['tmp_name'], $file);
         };
         
         $database->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday);
         $user = $database->catchUserData($usernameCheck);
-        var_dump($user);
-        
-        die;
+        rename($image, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . ".jpeg");
 
-        
-        
         header("Location: ../index/index.php");
             die();   
     } else {

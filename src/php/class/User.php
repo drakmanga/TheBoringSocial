@@ -1,5 +1,5 @@
 <?php
-namespace vagrant\TheBoringSocial\class;
+namespace vagrant\TheBoringSocial\php\class;
 
 
 class User {
@@ -70,14 +70,12 @@ class User {
     }
 
     public static function validateAge($birthday, $age = 18)
-{
-    if(is_string($birthday)) {
-        $birthday = strtotime($birthday);
+    {
+        if(is_string($birthday)) {
+            $birthday = strtotime($birthday);
+        }
+        if(time() - $birthday < $age * 31536000)  {
+            return false;
+        }
     }
-
-    if(time() - $birthday < $age * 31536000)  {
-        return false;
-    }
-
-}
 }
