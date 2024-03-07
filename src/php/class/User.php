@@ -8,6 +8,8 @@ class User {
     private $password;
     private $email;
     private $birthday;
+    private $name;
+    private $surname;
 
     public function getId()
     {
@@ -68,14 +70,28 @@ class User {
 
         return $this;
     }
-
-    public static function validateAge($birthday, $age = 18)
+ 
+    public function getName()
     {
-        if(is_string($birthday)) {
-            $birthday = strtotime($birthday);
-        }
-        if(time() - $birthday < $age * 31536000)  {
-            return false;
-        }
+        return $this->name;
+    }
+
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getSurname()
+    {
+        return $this->surname;
+    }
+
+    public function setSurname($surname)
+    {
+        $this->surname = $surname;
+
+        return $this;
     }
 }

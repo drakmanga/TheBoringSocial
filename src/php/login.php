@@ -1,11 +1,11 @@
 <?php 
 
-use vagrant\TheBoringSocial\php\class\Database;
+use vagrant\TheBoringSocial\php\class\DbFunction;
 use vagrant\TheBoringSocial\php\class\Password;
 
 require "../../vendor/autoload.php";
 
-$html = file_get_contents("index.html");
+$html = file_get_contents("../html/login.html");
 echo $html;
 
 session_start();
@@ -16,14 +16,14 @@ $password = "exercise";
 
 try {
 
-	$database = new Database($servername,$username,$password);
+    $dbFunction = new DbFunction($servername,$username,$password);
 
 	if (isset($_POST["login"])) {
-        $user = $database->catchUserData($_POST["username"]);
+        $user = $dbFunction->catchUserData($_POST["username"]);
 
         if (Password::matchPswd($_POST["username"],$user->getPassword())) {
 
-            $_SESSION["user"] = $user;
+            $_SESSION["user"] = $user->getUsername();
             header("Location: dashboard.php");
             die();
         }else {

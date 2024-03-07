@@ -28,19 +28,19 @@ public static function checkAndPrintErrorPassword ($password) {
     $errors = [$uppercase, $lowercase, $number, $specialChars, $lenghtPassword];
     
     if($errors[0]== 0) {
-        echo "<div class=container 'mt-3'><p class='text-danger'>la password deve contenere almeno una lettera maiuscola </p> </div> ";
+        echo "<div class=text-center mt-4'><p class='text-danger'>la password deve contenere almeno una lettera maiuscola </p> </div> ";
     }
     if($errors[1]== 0) {
-        echo "<div class=container 'mt-3'><p class='text-danger'>la password deve contenere almeno una lettera minuscola </p> </div>";
+        echo "<div class=text-center mt-4'><p class='text-danger'>la password deve contenere almeno una lettera minuscola </p> </div>";
     }
-    if($password[2]== 0) {
-        echo "<div class=container 'mt-3'><p class='text-danger'>la password deve contenere almeno un numero </p> </div> ";
+    if($errors[2]== 0) {
+        echo "<div class=text-center mt-4'><p class='text-danger'>la password deve contenere almeno un numero </p> </div> ";
     }
     if($errors[3]== 0) {
-        echo "<div class=container 'mt-3'><p class='text-danger'>la password deve contenere almeno un simbolo fra questi: @#%&?!/  </p> </div>";
+        echo "<div class=text-center mt-4'><p class='text-danger'>la password deve contenere almeno un simbolo fra questi: @#%&?!/  </p> </div>";
     }
     if($errors[4]) {
-        echo "<div class=container 'mt-3'><p class='text-danger'>la password deve essere lunga almeno 8 caratteri </p> </div> ";
+        echo "<div class=text-center mt-4'><p class='text-danger'>la password deve essere lunga almeno 8 caratteri </p> </div> ";
     }
 
     if ($errors[0]==1 && $errors[1]== 1 && $errors[2]== 1 && $errors[3]== 1 && $errors[4]== false) {
@@ -57,6 +57,35 @@ public static function matchPswd($pswd,$dbPswd){
     
     $matchedPswd = password_verify($pswd,$dbPswd,);
     return $matchedPswd;
+}
+
+public static function generateNewTemporaryPassword(){
+
+    $lower = str_split("abcdefghijklmonpqrstuvwxyz");
+    $upper = str_split("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    $symbols = str_split("@#%&?!/");
+    $number = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+
+    $arrayPassword = [];
+    $character = array (
+      $lower,
+      $upper,        
+      $number,
+      $symbols
+    );
+    
+    $passwordLenght = 16;
+ 
+    for ($counter = 0; $counter < $passwordLenght; $counter++) {
+      $x = rand(0,3);
+      $maxY = count($character[$x])-1;
+      $y = rand(0,$maxY);
+      $arrayPassword[$counter] = $character[$x][$y];
+    }
+      
+    $passwordgenerated = implode($arrayPassword);
+    
+    return $passwordgenerated;
 }
 
 }
