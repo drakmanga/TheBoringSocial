@@ -10,6 +10,8 @@ class User {
     private $birthday;
     private $name;
     private $surname;
+    private $imagePath;
+    private $city;
 
     public function getId()
     {
@@ -91,6 +93,30 @@ class User {
     public function setSurname($surname)
     {
         $this->surname = $surname;
+
+        return $this;
+    }
+
+    public function getImagePath()
+    {
+        return $this->imagePath;
+    }
+
+    public function setImagePath($imagePath)
+    {
+        $this->imagePath = $imagePath;
+
+        return $this;
+    }
+
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    public function setCity($city)
+    {
+        $this->city = $city;
 
         return $this;
     }

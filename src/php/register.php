@@ -2,6 +2,10 @@
 use vagrant\TheBoringSocial\php\class\Password;
 use vagrant\TheBoringSocial\php\class\UserValidation;
 use vagrant\TheBoringSocial\php\class\DbFunction;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FirePHPHandler;
 
 require "../../vendor/autoload.php";
 
@@ -17,8 +21,10 @@ date_default_timezone_set('Europe/Rome');
 try {
     
     $dbFunction = new DbFunction($servername,$username,$password);
-    
-    
+
+    $logger = new Logger('register logger');
+    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new FirePHPHandler());
 
     
     if (!empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"]) && ($_POST["surname"])) {
@@ -47,8 +53,10 @@ try {
 
         $extension= explode("/",$_FILES['file']['type']);
         rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
-        $newPathImage =  sprintf("/home/vagrant/exercise/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
+        $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
         $dbFunction->addImagePath($user->getUsername(), $newPathImage);
+
+        // $logger->info('Adding a new user', ['username' => $usernameCheck]);
         
         header("Location: ../php/login.php");
             die();   

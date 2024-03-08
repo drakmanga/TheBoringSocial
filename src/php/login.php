@@ -21,7 +21,7 @@ try {
 	if (isset($_POST["login"])) {
         $user = $dbFunction->catchUserData($_POST["username"]);
 
-        if (Password::matchPswd($_POST["username"],$user->getPassword())) {
+        if (Password::matchPswd($_POST["pswd"],$user->getPassword())) {
 
             $_SESSION["user"] = $user->getUsername();
             header("Location: dashboard.php");
