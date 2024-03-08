@@ -1,5 +1,6 @@
 <?php
 use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\Logout;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/dashboard.html");
@@ -9,6 +10,11 @@ session_start();
 if (empty($_SESSION["user"])) {
     header("Location: login.php");
     die();
+}
+if (isset($_POST["logout"])) {
+    $_SESSION = array();
+    Logout::logout();
+    
 }
 
 $servername = "localhost";

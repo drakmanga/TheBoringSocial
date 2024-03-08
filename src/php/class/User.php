@@ -12,6 +12,10 @@ class User {
     private $surname;
     private $imagePath;
     private $city;
+    private $description;
+    private $gender;
+    private $language;
+    private $webPage;
 
     public function getId()
     {
@@ -117,6 +121,54 @@ class User {
     public function setCity($city)
     {
         $this->city = $city;
+
+        return $this;
+    }
+
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getGender()
+    {
+        return $this->gender;
+    }
+ 
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+ 
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    public function setLanguage($language)
+    {
+        $this->language = $language;
+
+        return $this;
+    }
+
+    public function getWebPage()
+    {
+        return $this->webPage;
+    }
+
+    public function setWebPage($webPage)
+    {
+        $this->webPage = $webPage;
 
         return $this;
     }

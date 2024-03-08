@@ -10,7 +10,7 @@ use Monolog\Handler\FirePHPHandler;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/register.html");
-echo $html;
+
 
 $servername = "localhost";
 $username = "root";
@@ -22,15 +22,19 @@ try {
     
     $dbFunction = new DbFunction($servername,$username,$password);
 
-    $logger = new Logger('register logger');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
-    $logger->pushHandler(new FirePHPHandler());
+    // $logger = new Logger('register logger');
+    // $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    // $logger->pushHandler(new FirePHPHandler());
 
     
-    if (!empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"]) && ($_POST["surname"])) {
+    if (!empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"]) 
+                && ($_POST["surname"]) && ($_POST["city"]) && ($_POST["gender"])  && ($_POST["language"])) {
 
-        $name=$_POST["name"];
-        $surname=$_POST["surname"];
+        $name = ucfirst($_POST["name"]);
+        $surname = ucfirst($_POST["surname"]);
+        $city = ucfirst($_POST["city"]);
+        $gender = ucfirst($_POST["gender"]);
+        $language = ucfirst($_POST["language"]);
 
         $usernameCheck = $dbFunction->checkUsernameAndPrintError($_POST["username"]);
         
@@ -43,7 +47,7 @@ try {
 
         !UserValidation::validateAge($_POST["birthday"]) ? ($birthday = $_POST["birthday"]) : ("echo 'devi essere maggiorenne per iscriverti'" . die);
        
-        $dbFunction->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname);
+        $dbFunction->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname, $city, $gender, $language);
         $user = $dbFunction->catchUserData($usernameCheck);
 
         if (array_key_exists("file", $_FILES)) {
@@ -63,7 +67,7 @@ try {
     } else {
         if (isset($_POST["register"])) echo "<div class='d-flex align-items-center justify-content-center'><p class='text-danger'>Inserire tutti i campi </p> </div>";
     }
-    
+    echo $html;
 } catch(PDOException $e) {
 	echo "Connection failed: " . $e->getMessage();
 }

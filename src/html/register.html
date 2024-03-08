@@ -2,13 +2,13 @@
 
 <script>
   function showPassword() {
-      var x = document.getElementById("pwd");
-      if (x.type === "password") {
-          x.type = "text";
-      } else {
-          x.type = "password";
-      }
-      }
+    var x = document.getElementById("pwd");
+    if (x.type === "password") {
+        x.type = "text";
+    } else {
+        x.type = "password";
+    }
+  }
 </script>
 
   <head>
@@ -35,31 +35,56 @@
                 <h1>Register</h1>
                 <form method="post" action="../php/register.php" enctype="multipart/form-data">
                   <p class="text-muted">Sign up into new account</p>
+
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     <input type="text" class="form-control" name="name" placeholder="Name">
                   </div>
+
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     <input type="text" class="form-control" name="surname" placeholder="Surname">
                   </div>
+
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
                     <input type="text" class="form-control" name="username" placeholder="Username">
                   </div>
+
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
                     <input type="text" class="form-control" name="email" placeholder="email">
                   </div>
+
                   <div class="input-group mb-3">
                     <span class="input-group-addon"><i class="fa fa-lock"></i></span>
                     <input type="password" class="form-control"  id="pwd" name="pswd" placeholder="Password">
                     <input type="checkbox" onclick="showPassword()">Show Password
                   </div>
+
+                  <div class="input-group mb-3">
+                    <span class="input-group-addon"><i class="fa-solid fa-house"></i></span>
+                    <input type="text" class="form-control" name="city" placeholder="City">
+                  </div>
+
+                  <div class="input-group mb-3">
+                    <span class="input-group-addon"></span>
+                    <input type="text" class="form-control" name="gender" placeholder="Gender">
+                  </div>
+
+                  <div class="input-group mb-3">
+                    <span class="input-group-addon"></span>
+                    <input type="text" class="form-control" name="language" placeholder="Lingua madre">
+                  </div>
+
                   <div class="input-group mb-3">
                     <input type="date" class="form-control" name="birthday" max="2024-03-05">
+                  </div>
+
+                  <div class="input-group mb-3">
                     <input type="file" name = "file">
                   </div>
+                  
                   <div class="row">
                     <div class="col-6">
                       <button type="submit" name="register" class="btn btn-primary px-4">register</button>
@@ -73,7 +98,7 @@
                 <div>
                   <h2>Login</h2>
                   <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                  <a href="../php/login.php"> <input type ="submit" style="background-color: blue;" class="btn btn-primary mt-3" value="Login Now!"> </a>
+                  <a href="../php/login.php"> <input type ="submit" style="background-color: blue;" value="Login Now!" class="btn btn-primary mt-3"> </a>
                 </div>
               </div>
             </div>
