@@ -25,19 +25,7 @@ $password = "exercise";
 try {
 
     $dbFunction = new DbFunction($servername,$username,$password);
-
     $user = $dbFunction->catchUserData($_SESSION["user"]);
-    $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
-    $html = str_replace("%username%", $user->getUsername(), $html);
-    $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
-    $html = str_replace("%description%", $user->getDescription(), $html);
-    $html = str_replace("%city%", $user->getCity(), $html);
-    $html = str_replace("%gender%", $user->getGender(), $html);
-    $html = str_replace("%birthday%", $user->getBirthday(), $html);
-    $html = str_replace("%language%", $user->getLanguage(), $html);
-    $html = str_replace("%name%", $user->getName(), $html);
-    $html = str_replace("%surname%", $user->getSurname(), $html);
-    $html = str_replace("%webpage%", $user->getWebPage(), $html);
 
     if (isset($_POST["update"])) {
 
@@ -69,25 +57,37 @@ try {
             $webPage = "https://" . $_POST["webPage"];
             $dbFunction->updateInfoUser($user->getUsername(), "webPage", $webPage);
         }
-        
-            if (array_key_exists("file", $_FILES)) {
-                $nameImage = explode("/",$user->getImagePath());
 
+        if ($_FILES['file']["error"] != 4) {
+            if (array_key_exists("file", $_FILES)) {
+
+                $nameImage = explode("/",$user->getImagePath());
                 if (file_exists("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4])); {
                     unlink("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4]);
                 }
-                
                 $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/". $_FILES['file']['name'];
                 move_uploaded_file($_FILES['file']['tmp_name'], $file);
+
+                $extension= explode("/",$_FILES['file']['type']);
+                rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
+                $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
+                $dbFunction->addImagePath($user->getUsername(), $newPathImage);
             };
-            $extension= explode("/",$_FILES['file']['type']);
-            rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
-            $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
-            $dbFunction->addImagePath($user->getUsername(), $newPathImage);
-        
-        
+        }
     }
 
+    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
+    $html = str_replace("%username%", $user->getUsername(), $html);
+    $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
+    $html = str_replace("%description%", $user->getDescription(), $html);
+    $html = str_replace("%city%", $user->getCity(), $html);
+    $html = str_replace("%gender%", $user->getGender(), $html);
+    $html = str_replace("%birthday%", $user->getBirthday(), $html);
+    $html = str_replace("%language%", $user->getLanguage(), $html);
+    $html = str_replace("%name%", $user->getName(), $html);
+    $html = str_replace("%surname%", $user->getSurname(), $html);
+    $html = str_replace("%webpage%", $user->getWebPage(), $html);
     echo $html;
 
 } catch(PDOException $e) {
