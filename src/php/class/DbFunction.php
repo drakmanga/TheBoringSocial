@@ -52,7 +52,7 @@ class DbFunction extends Database{
         return $result;
     }
 
-    public function addNewUser($username, $password, $email, $dateTime, $birthday, $name, $surname, $city) {
+    public function addNewUser($username, $password, $email, $dateTime, $birthday, $name, $surname, $city, $gender, $language) {
         $dataInput = [
             'username' => $username,
             'password' => $password,
@@ -61,10 +61,12 @@ class DbFunction extends Database{
             'birthday' => $birthday,
             'name'=>$name,
             'surname'=>$surname,
-            'city'=>$city
+            'city'=>$city,
+            'gender'=>$gender,
+            'language'=>$language
         ];
-        $sql = "INSERT INTO userData (username, password, email, creation_date, birthday, name, surname, city) 
-                VALUES (:username, :password, :email, :creation_date, :birthday, :name, :surname, :city)";
+        $sql = "INSERT INTO userData (username, password, email, creation_date, birthday, name, surname, city, gender, language) 
+                VALUES (:username, :password, :email, :creation_date, :birthday, :name, :surname, :city, :gender, :language)";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
     }
