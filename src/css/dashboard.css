@@ -50,6 +50,7 @@ body{
 
 .profile-header-img img {
     max-width: 100%
+    
 }
 
 .profile-header-info h4 {
@@ -641,3 +642,4 @@ select.form-control:not([size]):not([multiple]) {
 .text-danger, .text-red {
     color: #ff5b57!important;
 }
+

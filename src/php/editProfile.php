@@ -39,23 +39,55 @@ try {
     $html = str_replace("%surname%", $user->getSurname(), $html);
     $html = str_replace("%webpage%", $user->getWebPage(), $html);
 
-    if (!empty($_POST["name"])) $name = ucfirst($_POST["name"]);
-    if (!empty($_POST["surname"])) $surname = ucfirst($_POST["surname"]);
-    if (!empty($_POST["description"])) $description = $_POST["description"];
-    if (!empty($_POST["city"])) $city = ucfirst($_POST["city"]);
-    if (!empty($_POST["gender"])) $gender = ucfirst($_POST["gender"]);
-    if (!empty($_POST["language"])) $language = ucfirst($_POST["language"]);
-    if (!empty($_POST["webpage"])) $webPage = "https://" . $_POST["webPage"];
-    
+    if (isset($_POST["update"])) {
 
-    
+        if (!empty($_POST["name"])) {
+            $name = ucfirst($_POST["name"]);
+            $dbFunction->updateInfoUser($user->getUsername(), "name", $name);
+        }
+        if (!empty($_POST["surname"])) {
+            $surname = ucfirst($_POST["surname"]);
+            $dbFunction->updateInfoUser($user->getUsername(), "surname", $surname);
+        }
+        if (!empty($_POST["description"])) {
+            $description = $_POST["description"];
+            $dbFunction->updateInfoUser($user->getUsername(), "description", $description);
+        }
+        if (!empty($_POST["city"])) {
+            $city = ucfirst($_POST["city"]);
+            $dbFunction->updateInfoUser($user->getUsername(), "city", $city);
+        }
+        if (!empty($_POST["gender"])) {
+            $gender = ucfirst($_POST["gender"]);
+            $dbFunction->updateInfoUser($user->getUsername(), "gender", $gender);
+        }
+        if (!empty($_POST["language"])) {
+            $language = ucfirst($_POST["language"]);
+            $dbFunction->updateInfoUser($user->getUsername(), "language", $language);
+        }
+        if (!empty($_POST["webpage"])) {
+            $webPage = "https://" . $_POST["webPage"];
+            $dbFunction->updateInfoUser($user->getUsername(), "webPage", $webPage);
+        }
+        
+            if (array_key_exists("file", $_FILES)) {
+                $nameImage = explode("/",$user->getImagePath());
 
+                if (file_exists("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4])); {
+                    unlink("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4]);
+                }
+                
+                $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/". $_FILES['file']['name'];
+                move_uploaded_file($_FILES['file']['tmp_name'], $file);
+            };
+            $extension= explode("/",$_FILES['file']['type']);
+            rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
+            $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
+            $dbFunction->addImagePath($user->getUsername(), $newPathImage);
+        
+        
+    }
 
-    
-        
-        
-        
-        
     echo $html;
 
 } catch(PDOException $e) {

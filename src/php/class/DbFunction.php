@@ -136,5 +136,18 @@ class DbFunction extends Database{
         $stmt->execute($dataInput);
     }
 
+    public function updateInfoUser ($username, $colum, $data) {
+        $dataInput = [
+            'username'=>$username,
+            'data'=>$data
+        ];
+
+        $sql = sprintf("UPDATE userData
+                SET %s = :data
+                WHERE username = :username",$colum);
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+
     
 }
