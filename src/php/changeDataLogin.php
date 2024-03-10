@@ -1,7 +1,11 @@
 <?php
 
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use Monolog\Level;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Password;
+use vagrant\TheBoringSocial\php\class\DbFunction;
 
 require "../../vendor/autoload.php";
 
@@ -24,11 +28,16 @@ try {
     $dbFunction = new DbFunction($servername,$username,$password);
     $user = $dbFunction->catchUserData($_SESSION["user"]);
 
+    $logger = new Logger('Change Data Login');
+    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new FirePHPHandler());
+
     if (!empty($_POST["username"])) {
         
         if(!empty($usernameCheck = $dbFunction->changeUsernameAndPrintError($_POST["username"]))) {
             $dbFunction->updateInfoUser($user->getUsername(), "username", $usernameCheck);
             $_SESSION["user"] = $usernameCheck;
+            $logger->info(sprintf('Utente %s ha modificato il suo username', $user->getUsername()));
         }else {
             $html = str_replace("<!-- username utilizzato -->", "<div class=container 'mt-3'><p class='text-danger'> username già utilizzato </p> </div>" , $html);
         }
@@ -50,6 +59,7 @@ try {
                 }else {
                     $cryptPswd = Password::cryptPswd($passwordCheckOrPrintError);
                     $dbFunction->updateInfoUser($user->getUsername(), "password", $cryptPswd);
+                    $logger->info(sprintf('Utente %s ha modificato la sua password', $user->getUsername()));
                     $html = str_replace("<!-- password cambiata -->", "<div class=container 'mt-3'><p class='text-success'> password cambiata con successo</p></div>" , $html);
                     
                 }
@@ -63,5 +73,6 @@ try {
     echo $html;
 
 } catch(PDOException $e) {
+    $logger->error($e->getMessage());
 	echo "Connection failed: " . $e->getMessage();
 }

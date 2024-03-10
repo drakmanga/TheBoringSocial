@@ -1,0 +1,5 @@
+[2024-03-10T17:21:14.747057+00:00] login logger.INFO: Utente admin si è loggato correttamente [] []
+[2024-03-10T17:27:09.754222+00:00] login logger.INFO: Utente admin si è loggato correttamente [] []
+[2024-03-10T17:34:01.506117+00:00] login logger.INFO: Un utente si è loggato correttamente {"username":"admin"} []
+[2024-03-10T17:38:41.452492+00:00] login logger.INFO: Utente {"username":"admin"} []
+[2024-03-10T17:38:57.818209+00:00] login logger.INFO: UtenteArraysi è loggato correttamente [] []

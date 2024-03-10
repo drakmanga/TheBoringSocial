@@ -1,11 +1,12 @@
 <?php 
-use vagrant\TheBoringSocial\php\class\Password;
-use vagrant\TheBoringSocial\php\class\UserValidation;
-use vagrant\TheBoringSocial\php\class\DbFunction;
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
+use vagrant\TheBoringSocial\php\class\Password;
+use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\UserValidation;
+
 
 require "../../vendor/autoload.php";
 
@@ -23,9 +24,9 @@ try {
     
     $dbFunction = new DbFunction($servername,$username,$password);
 
-    // $logger = new Logger('register logger');
-    // $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
-    // $logger->pushHandler(new FirePHPHandler());
+    $logger = new Logger('Register Logger');
+    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new FirePHPHandler());
 
     
     if (!empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"]) 
@@ -62,7 +63,7 @@ try {
         $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
         $dbFunction->addImagePath($user->getUsername(), $newPathImage);
 
-        // $logger->info('Adding a new user', ['username' => $usernameCheck]);
+        $logger->info('Un nuovo utente si è registrato!', ['username' => $usernameCheck]);
         
         header("Location: ../php/login.php");
             die();   
@@ -71,5 +72,6 @@ try {
     }
    
 } catch(PDOException $e) {
+    $logger->error($e->getMessage());
 	echo "Connection failed: " . $e->getMessage();
 }
