@@ -10,6 +10,7 @@ use Monolog\Handler\FirePHPHandler;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/register.html");
+echo $html;
 
 
 $servername = "localhost";
@@ -36,6 +37,7 @@ try {
         $gender = ucfirst($_POST["gender"]);
         $language = ucfirst($_POST["language"]);
 
+        
         $usernameCheck = $dbFunction->checkUsernameAndPrintError($_POST["username"]);
         
         $passwordCheck = Password::checkAndPrintErrorPassword($_POST["pswd"]);
@@ -67,7 +69,7 @@ try {
     } else {
         if (isset($_POST["register"])) echo "<div class='d-flex align-items-center justify-content-center'><p class='text-danger'>Inserire tutti i campi </p> </div>";
     }
-    echo $html;
+   
 } catch(PDOException $e) {
 	echo "Connection failed: " . $e->getMessage();
 }

@@ -149,5 +149,16 @@ class DbFunction extends Database{
         $stmt->execute($dataInput);
     }
 
-    
+    public function changeUsernameAndPrintError($username) {
+        $dataInput = [
+            'username' => $username,
+        ];
+       
+        $sql = "SELECT * FROM userData WHERE username = :username ";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $result = $stmt->fetchObject();
+        
+        if (empty($result)) return $username;
+    }
 }
