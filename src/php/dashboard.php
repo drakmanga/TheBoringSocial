@@ -33,9 +33,8 @@ try {
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
-    $logger->info(sprintf('Utente %s si trova nella dashboard', $user->getUsername()));
-
     $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $logger->info(sprintf('Utente %s si trova nella dashboard', $user->getUsername()));
 
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);

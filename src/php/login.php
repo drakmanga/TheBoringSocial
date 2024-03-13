@@ -29,7 +29,7 @@ try {
 
     $dbFunction = new DbFunction($servername,$username,$password);
 
-	if (isset($_POST["ogin"])) {
+	if (isset($_POST["login"])) {
         $user = $dbFunction->catchUserData($_POST["username"]);
 
         if (Password::matchPswd($_POST["pswd"],$user->getPassword())) {

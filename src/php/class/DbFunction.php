@@ -2,7 +2,9 @@
 
 namespace vagrant\TheBoringSocial\php\class;
 use PDO;
+use vagrant\TheBoringSocial\php\class\Post;
 use vagrant\TheBoringSocial\php\class\User;
+use vagrant\TheBoringSocial\php\class\Comment;
 use vagrant\TheBoringSocial\php\class\Database;
 
 class DbFunction extends Database{
@@ -45,6 +47,19 @@ class DbFunction extends Database{
             
         ];
         $sql = "SELECT * FROM userData WHERE username = :username";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
+        $result = $stmt->fetch();
+        return $result;
+    }
+
+    public function catchUserDataWithId($user_id) {
+        $dataInput = [
+            'id' => $user_id,
+            
+        ];
+        $sql = "SELECT * FROM userData WHERE id = :id";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
         $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
@@ -160,5 +175,82 @@ class DbFunction extends Database{
         $result = $stmt->fetchObject();
         
         if (empty($result)) return $username;
+    }
+
+    public function getMyPubblicatedPost($user_id) {
+        $dataInput = [
+            'user_id' => $user_id
+        ];
+
+        $sql = "SELECT * FROM post WHERE user_id = :user_id ";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+    
+    public function getAllLikeFromPost($post_id) {
+        $dataInput = [
+            'post_id' => $post_id
+        ];
+
+        $sql = "SELECT * FROM likedPost WHERE post_id = :post_id ";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+
+    public function addCommentToPost($post_id, $user_id, $comment, $date) {
+        $dataInput = [
+            'post_id' => $post_id,
+            'user_id' => $user_id,
+            'comment' => $comment,
+            'date' => $date
+        ];
+        $sql = "INSERT INTO commentPost (post_id, user_id, comment, date) 
+                VALUES (:post_id, :user_id, :comment, :date)";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+
+    public function addNewPost($user_id, $description, $date) {
+        $dataInput = [
+            'user_id' => $user_id,
+            'description' => $description,
+            'date' => $date
+        ];
+        $sql = "INSERT INTO post (user_id, description, date) 
+                VALUES (:user_id, :description, :date)";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+    
+    public function getCommentPost ($post_id, $limit = null) {
+        $dataInput = [
+            'post_id' => $post_id,
+            
+        ];
+            $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id";
+            if ($limit) $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id LIMIT 3";
+
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, Comment::class);
+        $result = $stmt->fetchAll();
+        return $result;
+    }
+
+    public function getPostFromDb($post_id) {
+        $dataInput = [
+            'post_id' => $post_id
+        ];
+        $sql = "SELECT * FROM post WHERE id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
+        $result = $stmt->fetch();
+        return $result;
     }
 }

@@ -1,0 +1,108 @@
+<html >
+    <head>
+        <title>MyPost</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" href="../css/myPost.css">
+    </head>
+
+
+    <body>
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div id="content" class="content content-full-width">
+                        <!-- begin profile -->
+                        <div class="profile">
+                            <div class="profile-header">
+                                <!-- BEGIN profile-header-cover -->
+                                <div class="profile-header-cover"></div>
+                                <!-- END profile-header-cover -->
+                                <!-- BEGIN profile-header-content -->
+                                <div class="profile-header-content">
+                                    <!-- BEGIN profile-header-img -->
+                                    <div class="profile-header-img">
+                                        <img src="%imageProfile%" alt="">
+                                    </div>
+                                    <!-- END profile-header-img -->
+                                    <!-- BEGIN profile-header-info -->
+                                    <div class="profile-header-info">
+                                        <h4 class="m-t-10 m-b-5">%username%</h4>
+                                        <p class="m-b-10">%nameAndSurname%</p>
+                                        <a href="../php/editProfile.php" class="btn btn-xs btn-info mb-4">Modifica Profilo</a>
+                                    </div>
+                                    <form  class = "position-absolute top-0 end-0" method="post" action="../php/dashboard.php">
+                                        <div class="btn-toolbar-mx-2" role="group" aria-label="Basic example">
+                                            <input type ="submit" class="btn btn-danger" value="Logout" name="logout" role="button">
+                                        </div>
+                                    </form>
+                                    <!-- END profile-header-info -->
+                                </div>
+                                <!-- END profile-header-content -->
+                                <!-- BEGIN profile-header-tab -->
+                                <ul class="profile-header-tab nav nav-tabs">
+                                    <li class="nav-item"><a href="../php/dashboard.php" target="__blank" class="nav-link_">POST</a></li>
+                                    <li class="nav-item"><a href="../php/myPost.php" target="__blank" class="nav-link_ active show">MY POST</a></li>
+                                    <li class="nav-item"><a href="https://www.bootdey.com/snippets/view/profile-photos" target="__blank" class="nav-link_">PHOTOS</a></li>
+                                    <li class="nav-item"><a href="https://www.bootdey.com/snippets/view/profile-videos" target="__blank" class="nav-link_">VIDEOS</a></li>
+                                    <li class="nav-item"><a href="https://www.bootdey.com/snippets/view/bs4-profile-friend-list" target="__blank" class="nav-link_">FRIENDS</a></li>
+                                    <li class="nav-item ms-auto"><a href="../php/changeDataLogin.php" target="__blank" class="nav-link_">CHANGE DATA LOGIN</a></li>
+                                </ul>
+                                <!-- END profile-header-tab -->
+                            </div>
+                        </div>
+                        <!-- end profile -->
+                        <br>
+                        <div class="container bootdey">
+                        <div class="col-md-12 bootstrap snippets">
+                        <div class="panel rounded-3">
+                            <div class="panel-body">
+                                <form method="post" action="../php/myPost.php">
+                                    <input type="text" class="form-control" rows="2" maxlength="255" id="my-text" name="post" placeholder="What are you thinking?">
+                                    <div class="d-flex justify-content-end">
+                                        <p id="count-result"> Total characters: 0 </p></td>
+                                    </div>
+                                    <input type="file" class="form-control" name="file">
+                                    <div class="mar-top clearfix">
+                                        <button class="btn btn-sm btn-primary pull-right"  name="newPost" type="submit"><i class="fa fa-pencil fa-fw"></i> Share</button>
+                                        
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- begin profile-content -->
+                <div class="profile-content">
+                <!-- begin tab-content -->
+                    
+                    <div class="tab-content p-0">
+                        <!-- begin #profile-post tab -->
+                        <div class="tab-pane fade active show" id="profile-post">
+                            <!-- begin timeline -->
+                            <ul class="timeline">
+                                <li>
+                                    <!-- newPost -->
+                                </li>
+                                
+                            </ul>
+                        </div>
+
+                        
+                        
+                        <!-- end #profile-post tab -->
+                    </div>
+                    <!-- end tab-content -->
+                </div>
+                <!-- end profile-content -->
+            </div>
+        </div>
+    </div>
+        </div>
+        <script src="../javascript/characterCounter.js"></script>
+    </body>
+</html>
