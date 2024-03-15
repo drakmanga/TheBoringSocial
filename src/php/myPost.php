@@ -26,6 +26,8 @@ $servername = "localhost";
 $username = "root";
 $password = "exercise";
 
+date_default_timezone_set('Europe/Rome');
+
 try {
 
     $dbFunction = new DbFunction($servername,$username,$password);
@@ -43,10 +45,10 @@ try {
     $html = str_replace("%username%", $user->getUsername(), $html);
     $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
 
-        // if (isset($_POST["newPost"])) {
-        //     if (!empty($_POST["post"])) {
-        //         $dateTime= date("Y-m-d H:i:s");
-        //         $dbFunction->addNewPost($user->getId(), $_POST["post"], $dateTime);
+        if (isset($_POST["newPost"])) {
+            if (!empty($_POST["post"])) {
+                $dateTime= date("Y-m-d H:i:s");
+                $dbFunction->addNewPost($user->getId(), ucfirst($_POST["post"]), $dateTime);
 
         //         if (array_key_exists("file", $_FILES)) {
         //             $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
@@ -57,44 +59,34 @@ try {
         //         rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $post"." . $extension[1]);
         //         $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s.%s", $user->getId(), $extension[1]);
         //         $dbFunction->addImagePath($user->getUsername(), $newPathImage);
-        //     }
-        // }
+            }
+        }
 
-       
         $allPost= $dbFunction->getMyPubblicatedPost($user->getId());
         $newPost="";
         $comment="";
         $string="";
 
-        
-        
         foreach (array_reverse($allPost) as $post) {
 
-
-            $modifyPost = '
-            <div class="panel rounded-3">
-                        <div class="panel-body">
-                            <form method="post" action="../php/myPost.php">
-                                <input type="text" maxlength="255" name="post" placeholder="new content">
-                                <div class="mar-top clearfix">
-                                    <button class="btn btn-sm btn-primary pull-right"  name="newPost" type="submit"><i class="fa fa-pencil fa-fw"></i> Modify</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-            ';
-            
            $likeCount = count($dbFunction->getAllLikeFromPost($post->getId()));
             
             if (isset($_POST["submitComment" . $post->getId()])) {
-                $dateTime= date("Y-m-d H:i:s");
+                $dateTime = date("Y-m-d H:i:s");
                 $dbFunction->addCommentToPost($post->getId(), $user->getId(), $_POST["comment" . $post->getId()], $dateTime);
                 $logger->info(sprintf('Utente %s ha commentato il post %s', $user->getUsername(), $post->getId()));
             }
-           
-                
-           
- 
+
+            if (isset($_POST["updatepost" . $post->getId()])) {
+                if (!empty($_POST["updatePost" . $post->getId()])) {
+                    $newPost = ucfirst($_POST["updatePost" . $post->getId()]);
+                    $dateTime =  date("Y-m-d H:i:s");
+                    $dbFunction->updatePost($post->getId(), $newPost, $dateTime);
+                    $logger->info(sprintf('Utente %s ha modificato il suo post %s', $user->getUsername(), $post->getId()));
+                    
+                }
+            }     
+
             $commentsPost = $dbFunction->getCommentPost($post->getId(), 3);
 
             foreach(array_reverse($commentsPost) as $commentPost) {
@@ -130,6 +122,11 @@ try {
             }
 
             $allCommentPost = $dbFunction->getCommentPost($post->getId());
+
+            ($post->getUpdatedPost()) ? $update = "Updated At" : $update = "Publicated At";
+
+            (!empty($post->getUpdatedPost())) ? $datePublicateOrUpdate = $post->getDateUpdate() : $datePublicateOrUpdate = $post->getDate();
+            
             $newPost = $newPost. sprintf('
            
             <div class="timeline-time">
@@ -147,15 +144,45 @@ try {
                     <form method="post" action="../php/myPost.php">
                         <span class="userimage"><img src="%s" alt=""></span>
                         <span class="username"><a href="javascript:;">%s</a> <small></small></span>
-                        <div class="d-grid d-md-flex justify-content-md-end">
-                            <span class="input-group-btn p-l-10">
-                                <button class="btn btn-primary btn-sm f-s-12 rounded-corner" name="modifyPost%s" type="submit">Modify Post</button>
+                        <span style="float:right;"> %s at %s </span>
+                        
+
+                        <!-- Button trigger modal -->
+                        <div>
+                            <span style="float:right;"> 
+                                <button type="button" class="btn btn-primary btn-sm " data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Modifica post
+                                </button>
                             </span>
+                        </div>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Modifica Post</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <table>
+                                            <tr>
+                                                <td class="field">Post</td>
+                                                    <td><input type="text" class="form-control" name="updatePost%s" placeholder="%s " maxlength="255"> </td>                                                     
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="submit" name="updatepost%s" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
                 <div class="timeline-content">
-                    <p> %s </p>
+                    <p> <h5>%s</h5> </p>
                     
                 </div>
                 <div class="timeline-likes">
@@ -195,23 +222,21 @@ try {
             </div>
             <!-- end timeline-body -->
             </li>
-            <li>',$post->getDate(),$user->getImagePath(), $user->getName() . " ". $user->getSurname(),
-                    $post->getId(), $post->getDescription(), count($allCommentPost),$post->getId(), $post->getId(),
+            <li>',  $post->getDate(), $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
+                    $update, $datePublicateOrUpdate,$post->getId(), $post->getDescription(), $post->getId(),
+                    $post->getDescription(), count($allCommentPost),$post->getId(), $post->getId(),
                     $user->getImagePath(), $post->getId(), $post->getId(), $comment);
 
-                     $comment="";             
-        }
-
-        if (isset($_POST["modifyPost" . $post->getId()])) {
+                     $comment="";   
+                     
             
-            
-            // $logger->info(sprintf('Utente %s ha aggiornato il post %s', $user->getUsername(), $post->getId()));
             
         }
-            $html = str_replace("<!-- newPost -->", $newPost , $html);
+        
 
-            
+    $html = str_replace("<!-- newPost -->", $newPost , $html);
     echo $html;
+    $allPost= $dbFunction->getMyPubblicatedPost($user->getId());
 
 
 } catch(PDOException $e) {

@@ -253,4 +253,22 @@ class DbFunction extends Database{
         $result = $stmt->fetch();
         return $result;
     }
+
+    public function updatePost($post_id, $newPost, $dateUpdate) {
+        
+        $dataInput = [
+            'post_id' => $post_id,
+            'description' => $newPost,
+            'dateUpdate' => $dateUpdate
+        ];
+        
+        $sql = "UPDATE post
+                SET description = :description, 
+                    dateUpdate = :dateUpdate,
+                    updatedPost = true
+                WHERE id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+    
 }

@@ -9,6 +9,9 @@ class Post {
     private $date;
     private $imagePath;
     private $videoPath;
+    private $updatedPost;
+    private $dateUpdate;
+
 
     public function getDescription()
     {
@@ -78,6 +81,30 @@ class Post {
     public function setUser_id($user_id)
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getDateUpdate()
+    {
+        return $this->dateUpdate;
+    }
+
+    public function setDateUpdate($dateUpdate)
+    {
+        $this->dateUpdate = $dateUpdate;
+
+        return $this;
+    }
+
+    public function getUpdatedPost()
+    {
+        return $this->updatedPost;
+    }
+
+    public function setUpdatedPost($updatedPost)
+    {
+        $this->updatedPost = $updatedPost;
 
         return $this;
     }

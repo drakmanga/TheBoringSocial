@@ -28,6 +28,8 @@ $password = "exercise";
 
 try {
 
+
+
     $dbFunction = new DbFunction($servername,$username,$password);
     $user = $dbFunction->catchUserData($_SESSION["user"]);
 
