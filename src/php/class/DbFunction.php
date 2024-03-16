@@ -182,7 +182,8 @@ class DbFunction extends Database{
             'user_id' => $user_id
         ];
 
-        $sql = "SELECT * FROM post WHERE user_id = :user_id ";
+        $sql = "SELECT * FROM post WHERE user_id = :user_id 
+                    ORDER BY date DESC";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
         $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
@@ -232,8 +233,11 @@ class DbFunction extends Database{
             'post_id' => $post_id,
             
         ];
-            $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id";
-            if ($limit) $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id LIMIT 3";
+            $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id
+                    ORDER BY date DESC";
+            if ($limit) $sql = "SELECT * FROM commentPost  WHERE post_id = :post_id 
+                                ORDER BY date DESC
+                                LIMIT 3";
 
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
@@ -271,4 +275,25 @@ class DbFunction extends Database{
         $stmt->execute($dataInput);
     }
     
+
+    public function removePost($post_id) {
+
+        $dataInput = [
+            'post_id' => $post_id,
+        ];
+        $sql = "DELETE FROM post WHERE id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        
+    }
+
+    public function removeCommentsPost($post_id) {
+        $dataInput = [
+            'post_id' => $post_id,
+        ];
+        $sql = "DELETE FROM commentPost WHERE post_id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        return $this;
+    }
 }
