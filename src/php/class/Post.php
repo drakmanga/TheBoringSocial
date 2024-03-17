@@ -7,8 +7,6 @@ class Post {
     private $user_id;
     private $description;
     private $date;
-    private $imagePath;
-    private $videoPath;
     private $updatedPost;
     private $dateUpdate;
 
@@ -33,30 +31,6 @@ class Post {
     public function setDate($date)
     {
         $this->date = $date;
-
-        return $this;
-    }
-
-    public function getImagePath()
-    {
-        return $this->imagePath;
-    }
-
-    public function setImagePath($imagePath)
-    {
-        $this->imagePath = $imagePath;
-
-        return $this;
-    }
-
-    public function getVideoPath()
-    {
-        return $this->videoPath;
-    }
- 
-    public function setVideoPath($videoPath)
-    {
-        $this->videoPath = $videoPath;
 
         return $this;
     }

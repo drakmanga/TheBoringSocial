@@ -49,8 +49,7 @@ class DbFunction extends Database{
         $sql = "SELECT * FROM userData WHERE username = :username";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
-        $result = $stmt->fetch();
+        $result = $stmt->fetchObject(User::class);
         return $result;
     }
 
@@ -62,8 +61,7 @@ class DbFunction extends Database{
         $sql = "SELECT * FROM userData WHERE id = :id";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
-        $result = $stmt->fetch();
+        $result = $stmt->fetchObject(User::class);
         return $result;
     }
 
@@ -133,8 +131,7 @@ class DbFunction extends Database{
                         AND email = :email";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, User::class);
-        $result = $stmt->fetch();
+        $result = $stmt->fetchObject(User::class);
         if (!empty($result)) return true;
         return false;
     }
@@ -186,8 +183,7 @@ class DbFunction extends Database{
                     ORDER BY date DESC";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, Post::class);
         return $result;
     }
     
@@ -241,8 +237,7 @@ class DbFunction extends Database{
 
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, Comment::class);
-        $result = $stmt->fetchAll();
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, Comment::class);
         return $result;
     }
 
@@ -253,8 +248,7 @@ class DbFunction extends Database{
         $sql = "SELECT * FROM post WHERE id = :post_id";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, Post::class);
-        $result = $stmt->fetch();
+        $result = $stmt->fetchObject(Post::class);
         return $result;
     }
 
@@ -287,6 +281,17 @@ class DbFunction extends Database{
         
     }
 
+    public function catchLastPost() {
+
+        $sql = "SELECT * FROM post 
+                ORDER BY date DESC
+                LIMIT 1 ";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchObject(Post::class);
+        return $result;
+    }
+
     public function removeCommentsPost($post_id) {
         $dataInput = [
             'post_id' => $post_id,
@@ -295,5 +300,57 @@ class DbFunction extends Database{
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
         return $this;
+    }
+
+    public function removeFilePost($post_id, $pathImage) {
+        $dataInput = [
+            'post_id' => $post_id,
+        ];
+        $sql = "DELETE FROM file WHERE post_id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+
+            unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $pathImage[4]);
+        
+        return $this;
+    }
+
+    public function addFilePath ($post_id, $path, $typology) {
+        $dataInput = [
+            'post_id' => $post_id,
+            'path' => $path,
+            'typology' => $typology
+        ];
+        
+        $sql = "INSERT INTO file (post_id, path, typology) 
+        VALUES (:post_id, :path, :typology)";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+
+    public function catchFilePostFromId($post_id) {
+        $dataInput = [
+            'post_id' => $post_id
+        ];
+
+        $sql = "SELECT * FROM file WHERE post_id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $result = $stmt->fetchObject(File::class);;
+        return $result;
+    }
+
+    public function checkIfPostHaveFileOrNot($post_id) {
+        $dataInput = [
+            'post_id' => $post_id
+        ];
+
+        $sql = "SELECT * FROM file WHERE post_id = :post_id";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $result = $stmt->fetchObject(File::class);;
+
+        if (!empty($result)) return true;
+        return false;
     }
 }
