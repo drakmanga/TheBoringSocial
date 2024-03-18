@@ -315,18 +315,35 @@ class DbFunction extends Database{
         return $this;
     }
 
-    public function addFilePath ($post_id, $path, $typology) {
+    public function addFilePath ($post_id, $path, $typology, $user_id) {
+        $dataInput = [
+            'post_id' => $post_id,
+            'user_id' => $user_id,
+            'path' => $path,
+            'typology' => $typology
+        ];
+        
+        $sql = "INSERT INTO file (post_id, user_id, path, typology) 
+                VALUES (:post_id, :user_id, :path, :typology)";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+    }
+
+    public function UpdateFilePath ($post_id, $path, $typology) {
         $dataInput = [
             'post_id' => $post_id,
             'path' => $path,
             'typology' => $typology
         ];
         
-        $sql = "INSERT INTO file (post_id, path, typology) 
-        VALUES (:post_id, :path, :typology)";
+        $sql = "UPDATE file
+                SET path = :path, 
+                    typology = :typology
+                WHERE post_id = :post_id";
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
     }
+    
 
     public function catchFilePostFromId($post_id) {
         $dataInput = [
@@ -337,6 +354,21 @@ class DbFunction extends Database{
         $stmt= $this->pdo->prepare($sql);
         $stmt->execute($dataInput);
         $result = $stmt->fetchObject(File::class);;
+        return $result;
+    }
+
+    public function catchAllPhotoFromId($user_id) {
+        $dataInput = [
+            'user_id' => $user_id,
+            'image' => "image"
+        ];
+
+        $sql = "SELECT * FROM file 
+                WHERE user_id = :user_id
+                AND typology = :image";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($dataInput);
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, File::class);
         return $result;
     }
 

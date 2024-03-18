@@ -5,6 +5,7 @@ namespace vagrant\TheBoringSocial\php\class;
 class File {
     private $id;
     private $post_id;
+    private $user_id;
     private $path;
     private $typology;
     
@@ -53,6 +54,18 @@ class File {
     public function setTypology($typology)
     {
         $this->typology = $typology;
+
+        return $this;
+    }
+
+    public function getUser_id()
+    {
+        return $this->user_id;
+    }
+
+    public function setUser_id($user_id)
+    {
+        $this->user_id = $user_id;
 
         return $this;
     }

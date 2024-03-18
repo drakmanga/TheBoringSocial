@@ -9,16 +9,13 @@ require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/commentPage.html");
 
-
-
 session_start();
 
-
-
-if (empty($_SESSION["user"])) {
+if (empty($_SESSION["user"]))  {
     header("Location: login.php");
     die();
 }
+
 if (isset($_POST["logout"])) {
     $_SESSION = array();
     Logout::logout();
@@ -28,8 +25,6 @@ if (isset($_POST["dashboard"])) {
     header("Location: dashboard.php");
     die();
 }
-
-
 
 $servername = "localhost";
 $username = "root";
@@ -47,22 +42,88 @@ try {
     $logger->info(sprintf('Utente %s si trova nella pagina del post %s', $user->getUsername(), $_GET["post_id"]));
 
     $postId = $_GET["post_id"];
-    $post = $dbFunction->getPostFromDb($postId);
-    $creatofOfPost  = $dbFunction->catchUserDataWithId($post->getUser_id());
-
-    $comment="";
     
+    $comment="";
+    $file="";
 
+    if (isset($_POST["updatepost"])) {
+        if (!empty($_POST["updatePost"])) { 
+            $postId = $_POST["postId"];
+            $newPost = ucfirst($_POST["updatePost"]);
+            $dateTime =  date("Y-m-d H:i:s");
+            $dbFunction->updatePost($postId, $newPost, $dateTime);
+            $logger->info(sprintf('Utente %s ha modificato il suo post %s', $user->getUsername(), $postId));
+        }
 
+        if ($_FILES['file']['error'] != 4) {
+            $postId = $_POST["postId"];
+            if (array_key_exists("file", $_FILES)) {
+                $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
+                move_uploaded_file($_FILES['file']['tmp_name'], $file);
+                $nameUnique = rand(1, 200000);
+            };
+            
+            $extension= explode("/",$_FILES['file']['type']);
+            $typology = (explode("/", $_FILES['file']['type']));
+            rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $postId . $nameUnique . "." . $extension[1]);
+
+            $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $postId, $nameUnique, $extension[1]);
+            
+            if ($dbFunction->checkIfPostHaveFileOrNot($postId)) {
+                $filePost = $dbFunction->catchFilePostFromId($postId);
+                $nameFile = (explode("/", $filePost->getPath()));
+                unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $nameFile[4]);
+                $dbFunction->UpdateFilePath($postId, $newPathImage, $typology[0]);
+            }else {
+                $dbFunction->addFilePath($postId, $newPathImage, $typology[0], $user->getId());
+            }
+        }
+    }     
+    
     if (isset($_POST["submitComment"])) {
         $dateTime= date("Y-m-d H:i:s");
         $dbFunction->addCommentToPost($post->getId(), $user->getId(), $_POST["comment"], $dateTime);
         $logger->info(sprintf('Utente %s ha commentato il post %s', $user->getUsername(), $post->getId()));
     }
 
+    if (isset($_POST["removePost"])) {
+        $postId = $_GET["post_id"];
+        $file = $dbFunction->catchFilePostFromId($postId);
+        
+        if ($file) $dbFunction->removeFilePost($postId, explode("/",$file->getPath()));
+        
+        $dbFunction->removeCommentsPost($postId)->removePost($postId);
+        
+        $logger->info(sprintf('Utente %s ha rimosso  il suo post %s', $user->getUsername(), $postId));
+        header("Location: myPost.php");
+        
+    }
+    $post = $dbFunction->getPostFromDb($postId);
+    ($post->getUpdatedPost()) ? $update = "Updated At" : $update = "Publicated At";
+    (!empty($post->getUpdatedPost())) ? $datePublicateOrUpdate = $post->getDateUpdate() : $datePublicateOrUpdate = $post->getDate();
+
+    if ($dbFunction->checkIfPostHaveFileOrNot($post->getId())) {
+
+        $filePost = $dbFunction->catchFilePostFromId($post->getId());
+
+        if ($filePost->getTypology() == "image") {
+             
+            $file = sprintf('<div class="card" style="width: 18rem;">
+                                <img src="%s">
+                             </div>',$filePost->getPath());
+
+        }elseif ($filePost->getTypology() == "video") {
+            
+            $file = sprintf('<div class="card" style="width: 18rem;">
+                                <video src="%s" controls></video>
+                             </div>',$filePost->getPath());
+        }else{
+            $file = "<!-- FILE -->";
+        }
+    }
+
     $commentsPost = $dbFunction->getCommentPost($postId);
 
-    
     foreach($commentsPost as $commentPost) {
     
         $userData = $dbFunction->catchUserDataWithId($commentPost->getUser_Id());
@@ -96,8 +157,6 @@ try {
     }
 
     $allCommentPost = $dbFunction->getCommentPost($post->getId());
-    ($post->getUpdatedPost()) ? $update = "Updated At" : $update = "Publicated At";
-    (!empty($post->getUpdatedPost())) ? $datePublicateOrUpdate = $post->getDateUpdate() : $datePublicateOrUpdate = $post->getDate();
 
     $postAndComments = sprintf('
     <div class="timeline-time">
@@ -112,7 +171,7 @@ try {
             <!-- begin timeline-body -->
             <div class="timeline-body">
                 <div class="timeline-header">
-                    <form method="post" action="../php/myPost.php">
+                    <form method="post" action="../php/commentPage.php?post_id=%s" enctype="multipart/form-data"">
                         <span class="userimage"><img src="%s" alt=""></span>
                         <span class="username"><a href="javascript:;">%s</a> <small></small></span>
                         <span style="float:right;"> %s at %s </span>
@@ -172,6 +231,7 @@ try {
                                             <tr>
                                                 <td class="field">Post</td>
                                                     <td><input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>   
+                                                    <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>
                                                                                                       
                                             </tr>
                                         </table>
@@ -192,11 +252,14 @@ try {
                 </div>
                 <div class="timeline-content">
                     <p> <h5>%s</h5> </p>
-                    
+                    <p> 
+                        %s
+                    </p>
                 </div>
                 <div class="timeline-likes">
                     <div class="stats-right">
-                        <span class="stats-text">%s Comments</span>
+                    <i class="fa fa-comments fa-fw fa-lg m-r-3"></i><a href="../php/commentPage.php?post_id=%s" type="url" class="m-r-15 text-inverse-lighter" name="moreComment%s"><span class="stats-text">%s Comments</span>
+                        
                     </div>
                     <div class="stats">
                         <span class="fa-stack fa-fw stats-icon">
@@ -210,7 +273,7 @@ try {
                 
                     <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
                     
-                        <i class="fa fa-comments fa-fw fa-lg m-r-3"></i> <a href="../php/commentPage.php?post_id=%s" type="button" class="btn btn-secondary btn-sm rounded-corner" name="moreComment%s"> See more Comments </a>
+                    <i class="fa fa-comments fa-fw fa-lg m-r-3"></i> <a href="../php/commentPage.php?post_id=%s" type="url" class="m-r-15 text-inverse-lighter" name="moreComment%s"> See more Comments </a>
                     
                     
                 </div>
@@ -235,12 +298,13 @@ try {
             <!-- end timeline-body -->
             </li>
             <li>
-    ', $post->getDate(), $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
+    ', $post->getDate(), $postId, $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
     $update, $datePublicateOrUpdate, $post->getId(), $post->getDescription(), $post->getId(),
-    $post->getDescription(), count($allCommentPost), $post->getId(), $post->getId(),
+    $post->getDescription(), $file, $post->getId(),$post->getId(), count($allCommentPost), $post->getId(), $post->getId(),
     $user->getImagePath(), $post->getId(), $post->getId(), $comment);
 
     $html = str_replace("<!-- post -->", $postAndComments , $html);
+    
     echo $html;
 
 } catch(PDOException $e) {

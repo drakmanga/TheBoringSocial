@@ -35,6 +35,7 @@ try {
 
     
     $post="";
+    $postId=null;
     
 
     $logger = new Logger('My post');
@@ -63,10 +64,10 @@ try {
                 
                 $extension= explode("/",$_FILES['file']['type']);
                 $typology = (explode("/", $_FILES['file']['type']));
-                rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $post . $nameUnique . "." . $extension[1]);
+                rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $post_id->getId() . $nameUnique . "." . $extension[1]);
 
-                $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $post, $nameUnique, $extension[1]);
-                $dbFunction->addFilePath($post_id->getId(), $newPathImage, $typology[0]);
+                $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $post_id->getId(), $nameUnique, $extension[1]);
+                $dbFunction->addFilePath($post_id->getId(), $newPathImage, $typology[0], $user->getId());
             }   
             $logger->info(sprintf('Utente %s ha aggiunto un nuovo post. Id: %s', $user->getUsername(), $postId));
         }
@@ -83,7 +84,9 @@ try {
             $postId = $_POST["postId"];
             $file = $dbFunction->catchFilePostFromId($postId);
             
-            $dbFunction->removeCommentsPost($postId)->removeFilePost($postId, explode("/",$file->getPath()))->removePost($postId);
+            if ($file) $dbFunction->removeFilePost($postId, explode("/",$file->getPath()));
+            
+            $dbFunction->removeCommentsPost($postId)->removePost($postId);
             
             $logger->info(sprintf('Utente %s ha rimosso  il suo post %s', $user->getUsername(), $postId));
         }
@@ -96,6 +99,31 @@ try {
                 $dbFunction->updatePost($postId, $newPost, $dateTime);
                 $logger->info(sprintf('Utente %s ha modificato il suo post %s', $user->getUsername(), $postId));
             }
+            
+                if ($_FILES['file']['error'] != 4) {
+                    $postId = $_POST["postId"];
+                    if (array_key_exists("file", $_FILES)) {
+                        $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
+                        move_uploaded_file($_FILES['file']['tmp_name'], $file);
+                    $nameUnique = rand(1, 200000);
+                    };
+                    
+                    $extension= explode("/",$_FILES['file']['type']);
+                    $typology = (explode("/", $_FILES['file']['type']));
+                    rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $postId . $nameUnique . "." . $extension[1]);
+
+                    $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $postId, $nameUnique, $extension[1]);
+
+                    if ($dbFunction->checkIfPostHaveFileOrNot($postId)) {
+                        $filePost = $dbFunction->catchFilePostFromId($postId);
+                        $nameFile = (explode("/", $filePost->getPath()));
+                        unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $nameFile[4]);
+                        $dbFunction->UpdateFilePath($postId, $newPathImage, $typology[0]);
+                    }else {
+                        $dbFunction->addFilePath($postId, $newPathImage, $typology[0], $user->getId());
+                    }
+                }
+            
         }     
 
 
@@ -183,11 +211,11 @@ try {
             <div class="timeline-icon">
                 <a href="javascript:;">&nbsp;</a>
             </div>
-
+            
             <!-- begin timeline-body -->
             <div class="timeline-body">
                 <div class="timeline-header">
-                    <form method="post" action="../php/myPost.php">
+                    <form method="post" action="../php/myPost.php" enctype="multipart/form-data">
                         <span class="userimage"><img src="%s" alt=""></span>
                         <span class="username"><a href="javascript:;">%s</a> <small></small></span>
                         <span style="float:right;"> %s at %s </span>
@@ -246,7 +274,8 @@ try {
                                         <table>
                                             <tr>
                                                 <td class="field">Post</td>
-                                                    <td><input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>   
+                                                    <td> <input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>
+                                                    <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>   
                                                                                                       
                                             </tr>
                                         </table>
@@ -274,7 +303,7 @@ try {
                 </div>
                 <div class="timeline-likes">
                     <div class="stats-right">
-                        <span class="stats-text">%s Comments</span>
+                    <i class="fa fa-comments fa-fw fa-lg m-r-3"></i><a href="../php/commentPage.php?post_id=%s" type="url" class="m-r-15 text-inverse-lighter" name="moreComment%s"><span class="stats-text">%s Comments</span>
                     </div>
                     <div class="stats">
                         <span class="fa-stack fa-fw stats-icon">
@@ -288,7 +317,7 @@ try {
                 
                     <a href="javascript:;" class="m-r-15 text-inverse-lighter"><i class="fa fa-thumbs-up fa-fw fa-lg m-r-3"></i> Like</a>
                     
-                        <i class="fa fa-comments fa-fw fa-lg m-r-3"></i> <a href="../php/commentPage.php?post_id=%s" type="button" class="btn btn-secondary btn-sm rounded-corner" name="moreComment%s"> See more Comments </a>
+                        <i class="fa fa-comments fa-fw fa-lg m-r-3"></i> <a href="../php/commentPage.php?post_id=%s" type="url" class="m-r-15 text-inverse-lighter" name="moreComment%s"> See more Comments </a>
                     
                     
                 </div>
@@ -314,7 +343,7 @@ try {
             </li>
             <li>',  $post->getDate(), $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
                     $update, $datePublicateOrUpdate, $post->getId(), $post->getDescription(), $post->getId(),
-                    $post->getDescription(), $file, count($allCommentPost), $post->getId(), $post->getId(),
+                    $post->getDescription(), $file ,$post->getId(),$post->getId(), count($allCommentPost), $post->getId(), $post->getId(),
                     $user->getImagePath(), $post->getId(), $comment);
 
                      $comment="";   
