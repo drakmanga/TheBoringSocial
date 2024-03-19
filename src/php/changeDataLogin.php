@@ -5,7 +5,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Password;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\UserService;
 
 require "../../vendor/autoload.php";
 
@@ -25,8 +25,8 @@ $password = "exercise";
 
 try {
     $cryptPswd=null;
-    $dbFunction = new DbFunction($servername,$username,$password);
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $userService = new UserService($servername,$username,$password);
+    $user = $userService->catchUserData($_SESSION["user"]);
 
     $logger = new Logger('Change Data Login');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
@@ -34,8 +34,8 @@ try {
 
     if (!empty($_POST["username"])) {
         
-        if(!empty($usernameCheck = $dbFunction->changeUsernameAndPrintError($_POST["username"]))) {
-            $dbFunction->updateInfoUser($user->getUsername(), "username", $usernameCheck);
+        if(!empty($usernameCheck = $userService->changeUsernameAndPrintError($_POST["username"]))) {
+            $userService->updateInfoUser($user->getUsername(), "username", $usernameCheck);
             $_SESSION["user"] = $usernameCheck;
             $logger->info(sprintf('Utente %s ha modificato il suo username', $user->getUsername()));
         }else {
@@ -58,7 +58,7 @@ try {
                     $html = str_replace("<!-- errori nuova password -->", "<div class=container 'mt-3'><p class='text-danger'> la nuova password non può essere uguale alla vecchia</p></div>" , $html);
                 }else {
                     $cryptPswd = Password::cryptPswd($passwordCheckOrPrintError);
-                    $dbFunction->updateInfoUser($user->getUsername(), "password", $cryptPswd);
+                    $userService->updateInfoUser($user->getUsername(), "password", $cryptPswd);
                     $logger->info(sprintf('Utente %s ha modificato la sua password', $user->getUsername()));
                     $html = str_replace("<!-- password cambiata -->", "<div class=container 'mt-3'><p class='text-success'> password cambiata con successo</p></div>" , $html);
                     
@@ -67,7 +67,7 @@ try {
         }
     }
 
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $user = $userService->catchUserData($_SESSION["user"]);
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
     echo $html;

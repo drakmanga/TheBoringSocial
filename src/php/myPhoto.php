@@ -6,7 +6,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\FileService;
+use vagrant\TheBoringSocial\php\class\UserService;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/myPhoto.html");
@@ -31,17 +32,18 @@ date_default_timezone_set('Europe/Rome');
 
 try {
 
-    $dbFunction = new DbFunction($servername,$username,$password);
+    $fileService = new FileService($servername,$username,$password);
+    $userService = new UserService($servername,$username,$password);
     $photos="";
 
     $logger = new Logger('My photo');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $user = $userService->catchUserData($_SESSION["user"]);
     $logger->info(sprintf('Utente %s si trova nella sezione MyPhoto', $user->getUsername()));
 
-    $filePost = $dbFunction->catchAllPhotoFromId($user->getId());
+    $filePost = $fileService->catchAllPhotoFromId($user->getId());
 
 
     foreach ($filePost as $photo) {

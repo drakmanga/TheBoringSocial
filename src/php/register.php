@@ -4,7 +4,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Password;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+
+use vagrant\TheBoringSocial\php\class\UserService;
 use vagrant\TheBoringSocial\php\class\UserValidation;
 
 
@@ -20,7 +21,7 @@ date_default_timezone_set('Europe/Rome');
 
 try {
     
-    $dbFunction = new DbFunction($servername,$username,$password);
+    $userService = new UserService($servername,$username,$password);
 
     $logger = new Logger('Register Logger');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
@@ -37,19 +38,19 @@ try {
             $language = ucfirst($_POST["language"]);
 
             
-            $usernameCheck = $dbFunction->checkUsernameAndPrintError($_POST["username"]);
+            $usernameCheck = $userService->checkUsernameAndPrintError($_POST["username"]);
             
             $passwordCheck = Password::checkAndPrintErrorPassword($_POST["pswd"]);
             $cryptPswd = Password::cryptPswd($passwordCheck);
             
-            $emailCheck = $dbFunction->checkEmailAndPrintError($_POST["email"]);
+            $emailCheck = $userService->checkEmailAndPrintError($_POST["email"]);
 
             $dateTime= date("Y-m-d H:i:s");
 
             !UserValidation::validateAge($_POST["birthday"]) ? ($birthday = $_POST["birthday"]) : ("echo 'devi essere maggiorenne per iscriverti'" . die);
         
-            $dbFunction->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname, $city, $gender, $language);
-            $user = $dbFunction->catchUserData($usernameCheck);
+            $userService->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname, $city, $gender, $language);
+            $user = $userService->catchUserData($usernameCheck);
 
         
             if (array_key_exists("file", $_FILES)) {
@@ -58,7 +59,7 @@ try {
                 $extension= explode("/",$_FILES["file"]["type"]);
                 rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
                 $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
-                $dbFunction->addImagePath($user->getUsername(), $newPathImage);
+                $userService->addImagePath($user->getUsername(), $newPathImage);
             }
             
 

@@ -4,7 +4,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Password;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\UserService;
 
 require "../../vendor/autoload.php";
 
@@ -20,7 +20,7 @@ $password = "exercise";
 
 try {
 
-    $dbFunction = new DbFunction($servername,$username,$password);
+    $userService = new UserService($servername,$username,$password);
 
     $logger = new Logger('Request New Password');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
@@ -33,9 +33,9 @@ try {
         $userUsername = $_POST["username"];
         $temporaryPassword = Password::generateNewTemporaryPassword();
         
-        if ($dbFunction->checkUserData($userUsername,$name,$surname,$email)) {
+        if ($userService->checkUserData($userUsername,$name,$surname,$email)) {
             $_SESSION["user"] = $userUsername;
-            $dbFunction->changePasswordFromUserData($temporaryPassword, $userUsername, $name, $surname, $email);
+            $userService->changePasswordFromUserData($temporaryPassword, $userUsername, $name, $surname, $email);
             $logger->info(sprintf('Utente %s ha richiesto la modifica della sua password', $user->getUsername()));
             header("Location: creationNewPwd.php");
             die();

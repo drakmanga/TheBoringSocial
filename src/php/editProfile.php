@@ -4,7 +4,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\UserService;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/editProfile.html");
@@ -30,8 +30,8 @@ try {
 
 
 
-    $dbFunction = new DbFunction($servername,$username,$password);
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $userService = new UserService($servername,$username,$password);
+    $user = $userService->catchUserData($_SESSION["user"]);
 
     $logger = new Logger('Edit Profile logger');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
@@ -41,37 +41,37 @@ try {
 
         if (!empty($_POST["name"])) {
             $name = ucfirst($_POST["name"]);
-            $dbFunction->updateInfoUser($user->getUsername(), "name", $name);
+            $userService->updateInfoUser($user->getUsername(), "name", $name);
             $logger->info(sprintf('Utente %s ha modificato il suo nome', $user->getUsername()));
         }
         if (!empty($_POST["surname"])) {
             $surname = ucfirst($_POST["surname"]);
-            $dbFunction->updateInfoUser($user->getUsername(), "surname", $surname);
+            $userService->updateInfoUser($user->getUsername(), "surname", $surname);
             $logger->info(sprintf('Utente %s ha modificato il suo cognome', $user->getUsername()));
         }
         if (!empty($_POST["description"])) {
             $description = $_POST["description"];
-            $dbFunction->updateInfoUser($user->getUsername(), "description", $description);
+            $userService->updateInfoUser($user->getUsername(), "description", $description);
             $logger->info(sprintf('Utente %s ha modificato la sua descrizione', $user->getUsername()));
         }
         if (!empty($_POST["city"])) {
             $city = ucfirst($_POST["city"]);
-            $dbFunction->updateInfoUser($user->getUsername(), "city", $city);
+            $userService->updateInfoUser($user->getUsername(), "city", $city);
             $logger->info(sprintf('Utente %s ha modificato la sua città', $user->getUsername()));
         }
         if (!empty($_POST["gender"])) {
             $gender = ucfirst($_POST["gender"]);
-            $dbFunction->updateInfoUser($user->getUsername(), "gender", $gender);
+            $userService->updateInfoUser($user->getUsername(), "gender", $gender);
             $logger->info(sprintf('Utente %s ha modificato il suo gender', $user->getUsername()));
         }
         if (!empty($_POST["language"])) {
             $language = ucfirst($_POST["language"]);
-            $dbFunction->updateInfoUser($user->getUsername(), "language", $language);
+            $userService->updateInfoUser($user->getUsername(), "language", $language);
             $logger->info(sprintf('Utente %s ha modificato la sua lingua', $user->getUsername()));
         }
         if (!empty($_POST["webpage"])) {
             $webPage = "https://" . $_POST["webPage"];
-            $dbFunction->updateInfoUser($user->getUsername(), "webPage", $webPage);
+            $userService->updateInfoUser($user->getUsername(), "webPage", $webPage);
             $logger->info(sprintf('Utente %s ha modificato la sua webPage', $user->getUsername()));
         }
 
@@ -88,13 +88,13 @@ try {
                 $extension= explode("/",$_FILES['file']['type']);
                 rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
                 $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
-                $dbFunction->addImagePath($user->getUsername(), $newPathImage);
+                $userService->addImagePath($user->getUsername(), $newPathImage);
                 $logger->info(sprintf('Utente %s ha modificato la sua immagine profilo', $user->getUsername()));
             };
         }
     }
 
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $user = $userService->catchUserData($_SESSION["user"]);
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
     $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);

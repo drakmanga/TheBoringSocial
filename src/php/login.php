@@ -5,7 +5,7 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Password;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\UserService;
 
 require "../../vendor/autoload.php";
 
@@ -27,10 +27,10 @@ try {
 
    
 
-    $dbFunction = new DbFunction($servername,$username,$password);
+    $userService = new UserService($servername,$username,$password);
 
 	if (isset($_POST["login"])) {
-        $user = $dbFunction->catchUserData($_POST["username"]);
+        $user = $userService->catchUserData($_POST["username"]);
 
         if (Password::matchPswd($_POST["pswd"],$user->getPassword())) {
 

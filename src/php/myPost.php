@@ -5,7 +5,11 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
-use vagrant\TheBoringSocial\php\class\DbFunction;
+use vagrant\TheBoringSocial\php\class\FileService;
+use vagrant\TheBoringSocial\php\class\LikeService;
+use vagrant\TheBoringSocial\php\class\PostService;
+use vagrant\TheBoringSocial\php\class\UserService;
+use vagrant\TheBoringSocial\php\class\CommentService;
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/myPost.html");
@@ -30,7 +34,12 @@ date_default_timezone_set('Europe/Rome');
 
 try {
 
-    $dbFunction = new DbFunction($servername,$username,$password);
+    $postService = new PostService($servername,$username,$password);
+    $commentService = new CommentService($servername,$username,$password);
+    $fileService = new FileService($servername,$username,$password);
+    $likeService = new LikeService($servername,$username,$password);
+    $userService = new UserService($servername,$username,$password);
+
     
 
     
@@ -42,7 +51,7 @@ try {
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
-    $user = $dbFunction->catchUserData($_SESSION["user"]);
+    $user = $userService->catchUserData($_SESSION["user"]);
     $logger->info(sprintf('Utente %s si trova nella sezione MyPost', $user->getUsername()));
 
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
@@ -52,8 +61,8 @@ try {
         if (isset($_POST["newPost"])) {
             if (!empty($_POST["post"])) {
                 $dateTime= date("Y-m-d H:i:s");
-                $dbFunction->addNewPost($user->getId(), ucfirst($_POST["post"]), $dateTime);
-                $post_id= $dbFunction->catchLastPost();
+                $postService->addNewPost($user->getId(), ucfirst($_POST["post"]), $dateTime);
+                $post_id= $postService->catchLastPost();
             }
             if ($_FILES['file']['error'] != 4) {
                 if (array_key_exists("file", $_FILES)) {
@@ -67,7 +76,7 @@ try {
                 rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $post_id->getId() . $nameUnique . "." . $extension[1]);
 
                 $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $post_id->getId(), $nameUnique, $extension[1]);
-                $dbFunction->addFilePath($post_id->getId(), $newPathImage, $typology[0], $user->getId());
+                $fileService->addFilePath($post_id->getId(), $newPathImage, $typology[0], $user->getId());
             }   
             $logger->info(sprintf('Utente %s ha aggiunto un nuovo post. Id: %s', $user->getUsername(), $postId));
         }
@@ -76,17 +85,18 @@ try {
         if (isset($_POST["submitComment"])) {
             $dateTime = date("Y-m-d H:i:s");
             $postId = $_POST["postId"];
-            $dbFunction->addCommentToPost($postId, $user->getId(), $_POST["comment"], $dateTime);
+            $commentService->addCommentToPost($postId, $user->getId(), $_POST["comment"], $dateTime);
             $logger->info(sprintf('Utente %s ha commentato il post %s', $user->getUsername(), $postId));
         }
 
         if (isset($_POST["removePost"])) {
             $postId = $_POST["postId"];
-            $file = $dbFunction->catchFilePostFromId($postId);
+            $file = $fileService->catchFilePostFromId($postId);
             
-            if ($file) $dbFunction->removeFilePost($postId, explode("/",$file->getPath()));
+            if ($file) $fileService->removeFilePost($postId, explode("/",$file->getPath()));
             
-            $dbFunction->removeCommentsPost($postId)->removePost($postId);
+            $commentService->removeCommentsPost($postId);
+            $postService->removePost($postId);
             
             $logger->info(sprintf('Utente %s ha rimosso  il suo post %s', $user->getUsername(), $postId));
         }
@@ -96,38 +106,37 @@ try {
                 $postId = $_POST["postId"];
                 $newPost = ucfirst($_POST["updatePost"]);
                 $dateTime =  date("Y-m-d H:i:s");
-                $dbFunction->updatePost($postId, $newPost, $dateTime);
+                $postService->updatePost($postId, $newPost, $dateTime);
                 $logger->info(sprintf('Utente %s ha modificato il suo post %s', $user->getUsername(), $postId));
             }
             
-                if ($_FILES['file']['error'] != 4) {
-                    $postId = $_POST["postId"];
-                    if (array_key_exists("file", $_FILES)) {
-                        $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
-                        move_uploaded_file($_FILES['file']['tmp_name'], $file);
-                    $nameUnique = rand(1, 200000);
-                    };
-                    
-                    $extension= explode("/",$_FILES['file']['type']);
-                    $typology = (explode("/", $_FILES['file']['type']));
-                    rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $postId . $nameUnique . "." . $extension[1]);
+            if ($_FILES['file']['error'] != 4) {
+                $postId = $_POST["postId"];
+                if (array_key_exists("file", $_FILES)) {
+                    $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
+                    move_uploaded_file($_FILES['file']['tmp_name'], $file);
+                $nameUnique = rand(1, 200000);
+                };
+                
+                $extension= explode("/",$_FILES['file']['type']);
+                $typology = (explode("/", $_FILES['file']['type']));
+                rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $postId . $nameUnique . "." . $extension[1]);
 
-                    $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $postId, $nameUnique, $extension[1]);
+                $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $postId, $nameUnique, $extension[1]);
 
-                    if ($dbFunction->checkIfPostHaveFileOrNot($postId)) {
-                        $filePost = $dbFunction->catchFilePostFromId($postId);
-                        $nameFile = (explode("/", $filePost->getPath()));
-                        unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $nameFile[4]);
-                        $dbFunction->UpdateFilePath($postId, $newPathImage, $typology[0]);
-                    }else {
-                        $dbFunction->addFilePath($postId, $newPathImage, $typology[0], $user->getId());
-                    }
+                if ($fileService->checkIfPostHaveFileOrNot($postId)) {
+                    $filePost = $fileService->catchFilePostFromId($postId);
+                    $nameFile = (explode("/", $filePost->getPath()));
+                    unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $nameFile[4]);
+                    $fileService->UpdateFilePath($postId, $newPathImage, $typology[0]);
+                }else {
+                    $fileService->addFilePath($postId, $newPathImage, $typology[0], $user->getId());
                 }
-            
+            }
         }     
 
 
-        $allPost= $dbFunction->getMyPubblicatedPost($user->getId());
+        $allPost= $postService->getMyPubblicatedPost($user->getId());
         $newPost="";
         $comment="";
         $string="";
@@ -136,11 +145,13 @@ try {
 
         foreach ($allPost as $post) {
 
-            $likeCount = count($dbFunction->getAllLikeFromPost($post->getId()));
+            
 
-            if ($dbFunction->checkIfPostHaveFileOrNot($post->getId())) {
+            $likeCount = count($likeService->getAllLikeFromPost($post->getId()));
 
-                $filePost = $dbFunction->catchFilePostFromId($post->getId());
+            if ($fileService->checkIfPostHaveFileOrNot($post->getId())) {
+
+                $filePost = $fileService->catchFilePostFromId($post->getId());
 
                 if ($filePost->getTypology() == "image") {
                      
@@ -161,11 +172,11 @@ try {
            
             
             
-            $commentsPost = $dbFunction->getCommentPost($post->getId(), 3);
+            $commentsPost = $commentService->getCommentPost($post->getId(), 3);
            
             foreach($commentsPost as $commentPost) {
     
-                $userData = $dbFunction->catchUserDataWithId($commentPost->getUser_Id());
+                $userData = $userService->catchUserDataWithId($commentPost->getUser_Id());
                 
                 $comment = $comment . sprintf('
                     
@@ -195,7 +206,7 @@ try {
                 $userData->getImagePath(), $userData->getName() . $userData->getSurname(), $commentPost->getDate(), $commentPost->getComment());
             }
 
-            $allCommentPost = $dbFunction->getCommentPost($post->getId());
+            $allCommentPost = $commentService->getCommentPost($post->getId());
 
             ($post->getUpdatedPost()) ? $update = "Updated At" : $update = "Publicated At";
 
@@ -223,7 +234,7 @@ try {
                         <!-- bottone rimuovi post -->
                         <div>
                             <span style="position:absolute; top:0; right:0"> 
-                                <button type="button" class="btn btn-danger btn-sm " data-bs-toggle="modal" data-bs-target="#exampleModal1">
+                                <button type="button" class="btn btn-danger btn-sm " data-bs-toggle="modal" data-bs-target="#exampleModal%s">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
                                     <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
                                     <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
@@ -233,7 +244,7 @@ try {
                         </div>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal%s" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -256,14 +267,14 @@ try {
                         <!-- Button trigger modal -->
                         <div>
                             <span style="float:right;"> 
-                                <button type="button" class="btn btn-primary btn-sm " data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                                <button type="button" class="btn btn-primary btn-sm " data-bs-toggle="modal" data-bs-target="#exampleModal%s.1">
                                     Modifica post
                                 </button>
                             </span>
                         </div>
 
                         <!-- Modal -->
-                        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="exampleModal%s.1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -274,8 +285,8 @@ try {
                                         <table>
                                             <tr>
                                                 <td class="field">Post</td>
-                                                    <td> <input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>
-                                                    <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>   
+                                                <td> <input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>
+                                                <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>   
                                                                                                       
                                             </tr>
                                         </table>
@@ -342,9 +353,11 @@ try {
             <!-- end timeline-body -->
             </li>
             <li>',  $post->getDate(), $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
-                    $update, $datePublicateOrUpdate, $post->getId(), $post->getDescription(), $post->getId(),
-                    $post->getDescription(), $file ,$post->getId(),$post->getId(), count($allCommentPost), $post->getId(), $post->getId(),
-                    $user->getImagePath(), $post->getId(), $comment);
+                    $update, $datePublicateOrUpdate, $post->getId(), $post->getId(), $post->getId(),
+                    $post->getId(), $post->getId(), $post->getDescription(), $post->getId(),
+                    $post->getDescription(), $file ,$post->getId(),$post->getId(), count($allCommentPost),
+                    $post->getId(), $post->getId(), $user->getImagePath(), $post->getId(), $comment);
+                    
 
                      $comment="";   
                      $filePost="";    
