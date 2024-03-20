@@ -286,8 +286,7 @@ try {
                                             <tr>
                                                 <td class="field">Post</td>
                                                 <td> <input type="text" class="form-control" name="updatePost" placeholder="%s " maxlength="255"> </td>
-                                                <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>   
-                                                                                                      
+                                                <td> <input type="file" class="form-control" name="file" maxlength="255"> </td>                                                          
                                             </tr>
                                         </table>
                                     </div>
