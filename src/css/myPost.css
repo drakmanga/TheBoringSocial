@@ -3,6 +3,8 @@ body{
     background:#3f3434af;
 }
 
+
+
 .profile-header {
     position: relative;
     overflow: hidden
@@ -46,6 +48,7 @@ body{
     padding: 3px;
     border-radius: 4px;
     background: #fff
+    
 }
 
 .profile-header-img img {

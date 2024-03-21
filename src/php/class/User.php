@@ -16,6 +16,7 @@ class User {
     private $gender;
     private $language;
     private $webPage;
+    private $creation_date;
 
     public function getId()
     {
@@ -169,6 +170,18 @@ class User {
     public function setWebPage($webPage)
     {
         $this->webPage = $webPage;
+
+        return $this;
+    }
+
+    public function getCreation_date()
+    {
+        return $this->creation_date;
+    }
+
+    public function setCreation_date($creation_date)
+    {
+        $this->creation_date = $creation_date;
 
         return $this;
     }

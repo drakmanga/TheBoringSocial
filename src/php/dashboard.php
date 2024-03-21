@@ -39,6 +39,19 @@ try {
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
     $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
+    
+
+
+    if (isset($_POST["searchSubmit"])) {
+        if (empty($_POST["search"])) {
+            header("Location: searchProfile.php");
+            die();
+        }else {
+            header(sprintf("Location: searchProfile.php?username=%s",$_POST["search"]));
+            die;
+        }
+        
+    }
     echo $html;
 
 } catch(PDOException $e) {
