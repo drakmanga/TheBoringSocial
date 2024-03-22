@@ -43,7 +43,13 @@ try {
     $user = $userService->catchUserData($_SESSION["user"]);
     $logger->info(sprintf('Utente %s si trova nella sezione MyPhoto', $user->getUsername()));
 
-    $filePost = $fileService->catchAllPhotoFromId($user->getId());
+
+    if (!empty($_GET["username"])) {
+        $userInfoPhoto = $userService->catchUserData($_GET["username"]);
+        $filePost = $fileService->catchAllPhotoFromId($userInfoPhoto->getId());
+    }else {
+        $filePost = $fileService->catchAllPhotoFromId($user->getId());
+    }
 
 
     foreach ($filePost as $photo) {

@@ -79,6 +79,8 @@ class FileService extends Database {
         return $result;
     }
 
+    
+
     public function checkIfPostHaveFileOrNot($post_id) {
         $dataInput = [
             'post_id' => $post_id

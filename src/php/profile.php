@@ -31,6 +31,8 @@ $servername = "localhost";
 $username = "root";
 $password = "exercise";
 
+date_default_timezone_set('Europe/Rome');
+
 try {
 
     $userService = new UserService($servername,$username,$password);
@@ -53,6 +55,7 @@ try {
     $html = str_replace("<!-- email -->", $userProfile->getEmail() , $html);
     $html = str_replace("<!-- website -->", $userProfile->getWebPage() , $html);
     $html = str_replace("<!-- usernameUser -->", $userProfile->getUsername() , $html);
+    $html = str_replace("%usernameUser%", $userProfile->getUsername() , $html);
     $html = str_replace("<!-- nameAndSurnameUser -->", $userProfile->getName() . " " . $userProfile->getSurname() , $html);
     
     
@@ -66,6 +69,13 @@ try {
     $filePost="";    
     $file = "";   
     $newPost="";
+
+    if (isset($_POST["submitComment"])) {
+        $dateTime = date("Y-m-d H:i:s");
+        $postId = $_POST["postId"];
+        $commentService->addCommentToPost($postId, $user->getId(), $_POST["comment"], $dateTime);
+        $logger->info(sprintf('Utente %s ha commentato il post %s', $user->getUsername(), $postId));
+    }
 
 
     $postUser = $postService->getMyPubblicatedPost($userProfile->getId());
@@ -183,7 +193,7 @@ try {
             <div class="timeline-comment-box">
                 <div class="user"><img src="%s"></div>
                 <div class="input">
-                    <form method="post" action="../php/myPost.php">
+                    <form method="post" action="../php/profile.php?username=%s">
                         <div class="input-group">
 
                             <input type="hidden" name="postId" value="%s" />
@@ -203,7 +213,8 @@ try {
         <li>',  
                 $post->getDate(), $userProfile->getImagePath(), $userProfile->getName() . " ". $userProfile->getSurname(),
                 $update, $datePublicateOrUpdate, $post->getDescription(), $file ,$post->getId(),$post->getId(), count($allCommentPost),
-                $post->getId(), $post->getId(), $user->getImagePath(), $post->getId(), $comment);        
+                $post->getId(), $post->getId(), $user->getImagePath(), $userProfile->getUsername(), $post->getId(), $comment);  
+                $comment="";      
     }
     $html = str_replace("<!-- newPost -->", $newPost, $html);
 

@@ -21,7 +21,6 @@ if (empty($_SESSION["user"])) {
 if (isset($_POST["logout"])) {
     $_SESSION = array();
     Logout::logout();
-    
 }
 
 $servername = "localhost";
@@ -32,11 +31,9 @@ try {
 
     $userService = new UserService($servername,$username,$password);
 
-
     $searchProfileService = new SearchProfileService($servername,$username,$password);
 
     $user = $userService->catchUserData($_SESSION["user"]);
-    
 
     $logger = new Logger('Search Profile Logger');
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
@@ -56,11 +53,11 @@ try {
         }
     }
 
-    $profileData = $searchProfileService->catchUsers();
-   
+    $profileData = $searchProfileService->catchUsers($user->getUsername());
+
 
     if (!empty($_GET)) {
-        $profileData = $searchProfileService->catchUsersFromParameters($_GET["username"]);
+        $profileData = $searchProfileService->catchUsersFromParameters($_GET["username"], $user->getUsername());
     }
 
     $profiles="";

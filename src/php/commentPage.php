@@ -45,10 +45,13 @@ try {
     $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
-    $user = $userService->catchUserData($_SESSION["user"]);
+    $postId = $_GET["post_id"];
+    $postForCatchUser = $postService->getPostFromDb($postId);
+    
+    $user = $userService->catchUserDataWithId($postForCatchUser->getUser_id());
     $logger->info(sprintf('Utente %s si trova nella pagina del post %s', $user->getUsername(), $_GET["post_id"]));
 
-    $postId = $_GET["post_id"];
+    
     
     $comment="";
     $file="";
@@ -309,7 +312,7 @@ try {
                 $post->getDate(), $postId, $user->getImagePath(), $user->getName() . " ". $user->getSurname(),
                 $update, $datePublicateOrUpdate, $postId, $postId, $postId, $postId,
                 $postId, $post->getDescription(), $postId, $post->getDescription(), $file, 
-                $postId, $postId, count($allCommentPost), $postId, $postId, $user->getImagePath(),
+                $postId, $postId, count($allCommentPost), $postId, $postId, $userData->getImagePath(),
                 $postId, $postId, $comment);
 
     $html = str_replace("<!-- post -->", $postAndComments , $html);
