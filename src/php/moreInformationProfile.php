@@ -57,6 +57,10 @@ try {
     $html = str_replace("%surname%", $userInfo->getSurname(), $html);
     $html = str_replace("%webpage%", $userInfo->getWebPage(), $html);
 
+    $html = str_replace("<!-- usernameUser -->", $userInfo->getUsername() , $html);
+    $html = str_replace("%usernameUser%", $userInfo->getUsername() , $html);
+    $html = str_replace("<!-- nameAndSurnameUser -->", $userInfo->getName() . " " . $userInfo->getSurname() , $html);
+
     echo $html;
 
 } catch(PDOException $e) {
