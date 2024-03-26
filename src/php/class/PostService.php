@@ -80,4 +80,30 @@ class PostService extends Database {
         $result = $stmt->fetchObject(Post::class);
         return $result;
     }
+
+    public function getAllPost () {
+        
+        $sql = "SELECT * FROM post ORDER BY date DESC";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, Post::class);
+        return $result;
+    }
+
+    public function getAllPostFromFollower ($followId) {
+
+        
+        $in  = str_repeat('?,', count($followId) - 1) . '?';
+
+        $sql = "SELECT * FROM post 
+                WHERE user_id IN ($in) 
+                ORDER BY date DESC";
+        $stmt= $this->pdo->prepare($sql);
+        $stmt->execute($followId);
+        $result = $stmt->fetchAll(PDO::FETCH_CLASS, Post::class);
+        return $result;
+
+    }
+
+
 }

@@ -3,6 +3,12 @@ body{
     background:#3f3434af;
 }
 
+.myclassdrak {
+    height: 115px;
+    width: 115px;
+    object-fit: cover;    
+}
+
 .profile-header {
     position: relative;
     overflow: hidden
