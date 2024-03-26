@@ -65,6 +65,40 @@ try {
         }
     }
 
+    if (isset($_POST["updatepost"])) {
+        if (!empty($_POST["updatePost"])) { 
+            $postId = $_POST["postId"];
+            $newPost = ucfirst($_POST["updatePost"]);
+            $dateTime =  date("Y-m-d H:i:s");
+            $postService->updatePost($postId, $newPost, $dateTime);
+            $logger->info(sprintf('Utente %s ha modificato il suo post %s', $user->getUsername(), $postId));
+        }
+        
+        if ($_FILES['file']['error'] != 4) {
+            $postId = $_POST["postId"];
+            if (array_key_exists("file", $_FILES)) {
+                $file = "/home/vagrant/exercise/TheBoringSocial/src/filePost/". $_FILES['file']['name'];
+                move_uploaded_file($_FILES['file']['tmp_name'], $file);
+            $nameUnique = rand(1, 200000);
+            };
+            
+            $extension= explode("/",$_FILES['file']['type']);
+            $typology = (explode("/", $_FILES['file']['type']));
+            rename($file, "/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $user->getId() . "postNumber" . $postId . $nameUnique . "." . $extension[1]);
+
+            $newPathImage =  sprintf("/TheBoringSocial/src/filePost/%s%s%s%s.%s", $user->getId(), "postNumber", $postId, $nameUnique, $extension[1]);
+
+            if ($fileService->checkIfPostHaveFileOrNot($postId)) {
+                $filePost = $fileService->catchFilePostFromId($postId);
+                $nameFile = (explode("/", $filePost->getPath()));
+                unlink("/home/vagrant/exercise/TheBoringSocial/src/filePost/" . $nameFile[4]);
+                $fileService->UpdateFilePath($postId, $newPathImage, $typology[0]);
+            }else {
+                $fileService->addFilePath($postId, $newPathImage, $typology[0], $user->getId());
+            }
+        }
+    }     
+
     if (isset($_POST["submitComment"])) {
         $dateTime = date("Y-m-d H:i:s");
         $postId = $_POST["postId"];
@@ -92,6 +126,7 @@ try {
         if ($file) $fileService->removeFilePost($postId, explode("/",$file->getPath()));
         
         $commentService->removeCommentsPost($postId);
+        $likeService->removeAllLikeFromPost(($postId));
         $postService->removePost($postId);
         
         $logger->info(sprintf('Utente %s ha rimosso  il suo post %s', $user->getUsername(), $postId));
@@ -111,7 +146,7 @@ try {
         }
 
         $followId[] = $user->getId();
-        var_dump($followId);
+        
 
         $allPostFollow = $postService->getAllPostFromFollower($followId);
 
