@@ -5,5 +5,5 @@ function showPassword() {
     } else {
         x.type = "password";
     }
-    }
+}
 

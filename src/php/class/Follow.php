@@ -1,8 +1,10 @@
 <?php
+
 namespace vagrant\TheBoringSocial\php\class;
 
 
-class Follow {
+class Follow
+{
     private $id;
     private $user_id;
     private $follow_user_id;

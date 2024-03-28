@@ -7,6 +7,7 @@ use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
 use vagrant\TheBoringSocial\php\class\UserService;
 use vagrant\TheBoringSocial\php\class\FollowService;
+
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/friends.html");
@@ -20,7 +21,6 @@ if (empty($_SESSION["user"])) {
 if (isset($_POST["logout"])) {
     $_SESSION = array();
     Logout::logout();
-    
 }
 
 $servername = "localhost";
@@ -29,13 +29,13 @@ $password = "exercise";
 
 try {
 
-    $userService = new UserService($servername,$username,$password);
-    $followService = new FollowService($servername,$username,$password);
+    $userService = new UserService($servername, $username, $password);
+    $followService = new FollowService($servername, $username, $password);
 
-    $friends="";
+    $friends = "";
 
     $logger = new Logger('Friends');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
     $user = $userService->catchUserData($_SESSION["user"]);
@@ -47,8 +47,8 @@ try {
 
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
-    $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
-    $html = str_replace("%followers%", $followers , $html);
+    $html = str_replace("%nameAndSurname%", $user->getName() . " " . $user->getSurname(), $html);
+    $html = str_replace("%followers%", $followers, $html);
     $html = str_replace("%counterFollow%", count($follows), $html);
 
 
@@ -56,8 +56,8 @@ try {
         if (empty($_POST["search"])) {
             header("Location: searchProfile.php");
             die();
-        }else {
-            header(sprintf("Location: searchProfile.php?username=%s",$_POST["search"]));
+        } else {
+            header(sprintf("Location: searchProfile.php?username=%s", $_POST["search"]));
             die;
         }
     }
@@ -84,15 +84,13 @@ try {
         </div>
         ', $followData->getUsername(), $followData->getImagePath(), $followData->getUsername(), $followData->getName() . "" . $followData->getSurname());
 
-        $followData="";
+        $followData = "";
     }
 
     $html = str_replace("<!-- Follow -->", $friends, $html);
 
     echo $html;
-    
-
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     $logger->error($e->getMessage());
-	echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed: " . $e->getMessage();
 }

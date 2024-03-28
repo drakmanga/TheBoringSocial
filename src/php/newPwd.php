@@ -1,4 +1,5 @@
 <?php
+
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -20,10 +21,10 @@ $password = "exercise";
 
 try {
 
-    $userService = new UserService($servername,$username,$password);
+    $userService = new UserService($servername, $username, $password);
 
     $logger = new Logger('Request New Password');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
     if (isset($_POST['name']) && ($_POST['username']) && ($_POST['surname']) && ($_POST['email'])) {
@@ -32,18 +33,16 @@ try {
         $email = $_POST["email"];
         $userUsername = $_POST["username"];
         $temporaryPassword = Password::generateNewTemporaryPassword();
-        
-        if ($userService->checkUserData($userUsername,$name,$surname,$email)) {
+
+        if ($userService->checkUserData($userUsername, $name, $surname, $email)) {
             $_SESSION["user"] = $userUsername;
             $userService->changePasswordFromUserData($temporaryPassword, $userUsername, $name, $surname, $email);
             $logger->info(sprintf('Utente %s ha richiesto la modifica della sua password', $user->getUsername()));
             header("Location: creationNewPwd.php");
             die();
         }
-       
-        
     }
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     $logger->error($e->getMessage());
-	echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed: " . $e->getMessage();
 }

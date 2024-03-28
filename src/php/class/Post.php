@@ -2,7 +2,8 @@
 
 namespace vagrant\TheBoringSocial\php\class;
 
-class Post {
+class Post
+{
     private $id;
     private $user_id;
     private $description;

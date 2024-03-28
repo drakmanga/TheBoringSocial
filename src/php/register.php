@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
@@ -20,16 +21,18 @@ $password = "exercise";
 date_default_timezone_set('Europe/Rome');
 
 try {
-    
-    $userService = new UserService($servername,$username,$password);
+
+    $userService = new UserService($servername, $username, $password);
 
     $logger = new Logger('Register Logger');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
     if (isset($_POST["register"])) {
-        if (!empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"]) 
-                    && ($_POST["surname"]) && ($_POST["city"]) && ($_POST["gender"])  && ($_POST["language"])) {
+        if (
+            !empty($_POST["username"]) && ($_POST["pswd"]) && ($_POST["email"]) && ($_POST["birthday"]) && ($_POST["name"])
+            && ($_POST["surname"]) && ($_POST["city"]) && ($_POST["gender"])  && ($_POST["language"])
+        ) {
 
             $name = ucfirst($_POST["name"]);
             $surname = ucfirst($_POST["surname"]);
@@ -37,43 +40,42 @@ try {
             $gender = ucfirst($_POST["gender"]);
             $language = ucfirst($_POST["language"]);
 
-            
+
             $usernameCheck = $userService->checkUsernameAndPrintError($_POST["username"]);
-            
+
             $passwordCheck = Password::checkAndPrintErrorPassword($_POST["pswd"]);
             $cryptPswd = Password::cryptPswd($passwordCheck);
-            
+
             $emailCheck = $userService->checkEmailAndPrintError($_POST["email"]);
 
-            $dateTime= date("Y-m-d H:i:s");
+            $dateTime = date("Y-m-d H:i:s");
 
             !UserValidation::validateAge($_POST["birthday"]) ? ($birthday = $_POST["birthday"]) : ("echo 'devi essere maggiorenne per iscriverti'" . die);
-        
-            $userService->addNewUser($usernameCheck,$cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname, $city, $gender, $language);
+
+            $userService->addNewUser($usernameCheck, $cryptPswd, $emailCheck, $dateTime, $birthday, $name, $surname, $city, $gender, $language);
             $user = $userService->catchUserData($usernameCheck);
 
-        
+
             if (array_key_exists("file", $_FILES)) {
-                $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/". $_FILES["file"]["name"];
+                $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $_FILES["file"]["name"];
                 move_uploaded_file($_FILES["file"]["tmp_name"], $file);
-                $extension= explode("/",$_FILES["file"]["type"]);
+                $extension = explode("/", $_FILES["file"]["type"]);
                 rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
                 $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
                 $userService->addImagePath($user->getUsername(), $newPathImage);
             }
-            
+
 
             $logger->info('Un nuovo utente si è registrato!', ['username' => $usernameCheck]);
-            
-            header("Location: ../php/login.php");
-                die;  
 
+            header("Location: ../php/login.php");
+            die;
         } else {
             echo "<div class='d-flex align-items-center justify-content-center'><p class='text-danger'>Inserire tutti i campi </p> </div>";
         }
     }
     echo $html;
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     $logger->error($e->getMessage());
-	echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed: " . $e->getMessage();
 }

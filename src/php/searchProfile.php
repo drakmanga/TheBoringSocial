@@ -7,6 +7,7 @@ use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
 use vagrant\TheBoringSocial\php\class\SearchProfileService;
 use vagrant\TheBoringSocial\php\class\UserService;
+
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/searchProfile.html");
@@ -29,26 +30,26 @@ $password = "exercise";
 
 try {
 
-    $userService = new UserService($servername,$username,$password);
+    $userService = new UserService($servername, $username, $password);
 
-    $searchProfileService = new SearchProfileService($servername,$username,$password);
+    $searchProfileService = new SearchProfileService($servername, $username, $password);
 
     $user = $userService->catchUserData($_SESSION["user"]);
 
     $logger = new Logger('Search Profile Logger');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
-    $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
+    $html = str_replace("%nameAndSurname%", $user->getName() . " " . $user->getSurname(), $html);
 
     if (isset($_POST["searchSubmit"])) {
         if (empty($_POST["search"])) {
             header("Location: searchProfile.php");
             die();
-        }else {
-            header(sprintf("Location: searchProfile.php?username=%s",$_POST["search"]));
+        } else {
+            header(sprintf("Location: searchProfile.php?username=%s", $_POST["search"]));
             die;
         }
     }
@@ -60,7 +61,7 @@ try {
         $profileData = $searchProfileService->catchUsersFromParameters($_GET["username"], $user->getUsername());
     }
 
-    $profiles="";
+    $profiles = "";
 
     foreach ($profileData as $profile) {
         $profiles = $profiles . sprintf('
@@ -88,15 +89,13 @@ try {
                     
                 </div>
             </div>
-        </div>',  $profile->getUsername(),$profile->getImagePath(), $profile->getName(), $profile->getSurname(), $profile->getGender(), $profile->getCity(), $profile->getUsername());
+        </div>',  $profile->getUsername(), $profile->getImagePath(), $profile->getName(), $profile->getSurname(), $profile->getGender(), $profile->getCity(), $profile->getUsername());
     }
-    
+
     $html = str_replace("<!-- profile -->", $profiles, $html);
 
     echo $html;
-
-
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     $logger->error($e->getMessage());
-	echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed: " . $e->getMessage();
 }

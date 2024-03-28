@@ -1,10 +1,12 @@
 <?php
+
 use Monolog\Level;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\FirePHPHandler;
 use vagrant\TheBoringSocial\php\class\Logout;
 use vagrant\TheBoringSocial\php\class\UserService;
+
 require "../../vendor/autoload.php";
 
 $html = file_get_contents("../html/editProfile.html");
@@ -19,7 +21,6 @@ if (empty($_SESSION["user"])) {
 if (isset($_POST["logout"])) {
     $_SESSION = array();
     Logout::logout();
-    
 }
 
 $servername = "localhost";
@@ -28,13 +29,11 @@ $password = "exercise";
 
 try {
 
-
-
-    $userService = new UserService($servername,$username,$password);
+    $userService = new UserService($servername, $username, $password);
     $user = $userService->catchUserData($_SESSION["user"]);
 
     $logger = new Logger('Edit Profile logger');
-    $logger->pushHandler(new StreamHandler(__DIR__.'/my_app.log', Level::Debug));
+    $logger->pushHandler(new StreamHandler(__DIR__ . '/my_app.log', Level::Debug));
     $logger->pushHandler(new FirePHPHandler());
 
     if (isset($_POST["update"])) {
@@ -78,14 +77,14 @@ try {
         if ($_FILES['file']["error"] != 4) {
             if (array_key_exists("file", $_FILES)) {
 
-                $nameImage = explode("/",$user->getImagePath());
+                $nameImage = explode("/", $user->getImagePath());
                 if (file_exists("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4])); {
                     unlink("/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $nameImage[4]);
                 }
-                $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/". $_FILES['file']['name'];
+                $file = "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $_FILES['file']['name'];
                 move_uploaded_file($_FILES['file']['tmp_name'], $file);
 
-                $extension= explode("/",$_FILES['file']['type']);
+                $extension = explode("/", $_FILES['file']['type']);
                 rename($file, "/home/vagrant/exercise/TheBoringSocial/src/photoUser/" . $user->getId() . "." . $extension[1]);
                 $newPathImage =  sprintf("/TheBoringSocial/src/photoUser/%s.%s", $user->getId(), $extension[1]);
                 $userService->addImagePath($user->getUsername(), $newPathImage);
@@ -97,7 +96,7 @@ try {
     $user = $userService->catchUserData($_SESSION["user"]);
     $html = str_replace("%imageProfile%", $user->getImagePath(), $html);
     $html = str_replace("%username%", $user->getUsername(), $html);
-    $html = str_replace("%nameAndSurname%", $user->getName() . " ". $user->getSurname(), $html);
+    $html = str_replace("%nameAndSurname%", $user->getName() . " " . $user->getSurname(), $html);
     $html = str_replace("%description%", $user->getDescription(), $html);
     $html = str_replace("%city%", $user->getCity(), $html);
     $html = str_replace("%gender%", $user->getGender(), $html);
@@ -107,8 +106,7 @@ try {
     $html = str_replace("%surname%", $user->getSurname(), $html);
     $html = str_replace("%webpage%", $user->getWebPage(), $html);
     echo $html;
-
-} catch(PDOException $e) {
+} catch (PDOException $e) {
     $logger->error($e->getMessage());
-	echo "Connection failed: " . $e->getMessage();
+    echo "Connection failed: " . $e->getMessage();
 }

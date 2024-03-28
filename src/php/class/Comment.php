@@ -2,7 +2,8 @@
 
 namespace vagrant\TheBoringSocial\php\class;
 
-class Comment {
+class Comment
+{
     private $id;
     private $post_id;
     private $user_id;
@@ -44,12 +45,12 @@ class Comment {
 
         return $this;
     }
- 
+
     public function getPost_id()
     {
         return $this->post_id;
     }
- 
+
     public function setPost_id($post_id)
     {
         $this->post_id = $post_id;

@@ -1,12 +1,12 @@
-body{
-    margin-top:20px;
-    background:#3f3434af;
+body {
+    margin-top: 20px;
+    background: #3f3434af;
 }
 
 .myclassdrak {
     height: 115px;
     width: 115px;
-    object-fit: cover;    
+    object-fit: cover;
 }
 
 .profile-header {
@@ -52,12 +52,10 @@ body{
     padding: 3px;
     border-radius: 4px;
     background: #fff
-    
 }
 
 .profile-header-img img {
     max-width: 100%
-    
 }
 
 .profile-header-info h4 {
@@ -153,7 +151,7 @@ body{
 .t-plus-7,
 .t-plus-8,
 .t-plus-9 {
-    position: relative!important
+    position: relative !important
 }
 
 .profile-header .profile-header-tab {
@@ -167,7 +165,7 @@ body{
 
 .text-ellipsis,
 .text-nowrap {
-    white-space: nowrap!important
+    white-space: nowrap !important
 }
 
 .profile-header .profile-header-tab>li {
@@ -247,7 +245,7 @@ body{
 }
 
 .table.table-profile>thead>tr>th {
-    border-bottom: none!important
+    border-bottom: none !important
 }
 
 .table.table-profile>thead>tr>th h4 {
@@ -284,7 +282,7 @@ body{
 }
 
 .table.table-profile>tbody>tr.divider>td {
-    padding: 0!important;
+    padding: 0 !important;
     height: 10px
 }
 
@@ -392,27 +390,37 @@ body.flat-black {
 }
 
 .bg-white {
-    background-color: #fff!important;
+    background-color: #fff !important;
 }
+
 .p-10 {
-    padding: 10px!important;
+    padding: 10px !important;
 }
+
 .media.media-xs .media-object {
     width: 32px;
 }
+
 .m-b-2 {
-    margin-bottom: 2px!important;
+    margin-bottom: 2px !important;
 }
-.media>.media-left, .media>.pull-left {
+
+.media>.media-left,
+.media>.pull-left {
     padding-right: 15px;
 }
-.media-body, .media-left, .media-right {
+
+.media-body,
+.media-left,
+.media-right {
     display: table-cell;
     vertical-align: top;
 }
+
 select.form-control:not([size]):not([multiple]) {
     height: 34px;
 }
+
 .form-control.input-inline {
     display: inline;
     width: auto;
@@ -426,26 +434,29 @@ select.form-control:not([size]):not([multiple]) {
     line-height: 1.4;
 }
 
-.text-danger, .text-red {
-    color: #ff5b57!important;
+.text-danger,
+.text-red {
+    color: #ff5b57 !important;
 }
 
 .panel {
-    box-shadow: 0 2px 0 rgba(0,0,0,0.075);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.075);
     border-radius: 0;
     border: 0;
     margin-bottom: 15px;
     background-color: white;
-    
+
 }
 
-.panel .panel-footer, .panel>:last-child {
+.panel .panel-footer,
+.panel>:last-child {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
-    
+
 }
 
-.panel .panel-heading, .panel>:first-child {
+.panel .panel-heading,
+.panel>:first-child {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
@@ -458,21 +469,25 @@ select.form-control:not([size]):not([multiple]) {
     margin: -1px;
     list-style-type: none;
 }
+
 .img-grid-list {
     padding: 0;
 }
-.img-grid-list > li {
+
+.img-grid-list>li {
     float: left;
     width: 20%;
     padding: 1px;
 }
-.img-grid-list > li a {
+
+.img-grid-list>li a {
     position: relative;
     overflow: hidden;
     padding-top: 75%;
     display: block;
 }
-.img-grid-list > li a img {
+
+.img-grid-list>li a img {
     position: absolute;
     right: 0;
     top: 0;
@@ -482,81 +497,97 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 #myImg {
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-#myImg:hover {opacity: 0.7;}
+#myImg:hover {
+    opacity: 0.7;
+}
 
 /* The Modal (background) */
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
-  padding-top: 100px; /* Location of the box */
-  left: 0;
-  top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 100px;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.9);
+    /* Black w/ opacity */
 }
 
 /* Modal Content (Image) */
 .modal-content {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
 }
 
 /* Caption of Modal Image (Image Text) - Same Width as the Image */
 #caption {
-  margin: auto;
-  display: block;
-  width: 80%;
-  max-width: 700px;
-  text-align: center;
-  color: #ccc;
-  padding: 10px 0;
-  height: 150px;
+    margin: auto;
+    display: block;
+    width: 80%;
+    max-width: 700px;
+    text-align: center;
+    color: #ccc;
+    padding: 10px 0;
+    height: 150px;
 }
 
 /* Add Animation - Zoom in the Modal */
-.modal-content, #caption {
-  animation-name: zoom;
-  animation-duration: 0.6s;
+.modal-content,
+#caption {
+    animation-name: zoom;
+    animation-duration: 0.6s;
 }
 
 @keyframes zoom {
-  from {transform:scale(0)}
-  to {transform:scale(1)}
+    from {
+        transform: scale(0)
+    }
+
+    to {
+        transform: scale(1)
+    }
 }
 
 /* The Close Button */
 .close {
-  position: absolute;
-  top: 15px;
-  right: 35px;
-  color: #f1f1f1;
-  font-size: 40px;
-  font-weight: bold;
-  transition: 0.3s;
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
 }
 
 .close:hover,
 .close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 /* 100% Image Width on Smaller Screens */
-@media only screen and (max-width: 700px){
-  .modal-content {
-    width: 100%;
-  }
+@media only screen and (max-width: 700px) {
+    .modal-content {
+        width: 100%;
+    }
 }
-

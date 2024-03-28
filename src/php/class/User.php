@@ -1,8 +1,10 @@
 <?php
+
 namespace vagrant\TheBoringSocial\php\class;
 
 
-class User {
+class User
+{
     private $id;
     private $username;
     private $password;
@@ -77,7 +79,7 @@ class User {
 
         return $this;
     }
- 
+
     public function getName()
     {
         return $this->name;
@@ -142,14 +144,14 @@ class User {
     {
         return $this->gender;
     }
- 
+
     public function setGender($gender)
     {
         $this->gender = $gender;
 
         return $this;
     }
- 
+
     public function getLanguage()
     {
         return $this->language;

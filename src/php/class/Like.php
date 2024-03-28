@@ -1,8 +1,10 @@
 <?php
+
 namespace vagrant\TheBoringSocial\php\class;
 
 
-class Like {
+class Like
+{
     private $id;
     private $post_id;
     private $user_id;
@@ -31,12 +33,12 @@ class Like {
 
         return $this;
     }
- 
+
     public function getUser_id()
     {
         return $this->user_id;
     }
- 
+
     public function setUser_id($user_id)
     {
         $this->user_id = $user_id;

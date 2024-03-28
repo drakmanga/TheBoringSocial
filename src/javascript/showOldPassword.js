@@ -5,4 +5,4 @@ function showOldPassword() {
     } else {
         x.type = "password";
     }
-    }
+}

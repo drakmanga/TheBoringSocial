@@ -1,14 +1,16 @@
 <?php
+
 namespace vagrant\TheBoringSocial\php\class;
 
 
-class File {
+class File
+{
     private $id;
     private $post_id;
     private $user_id;
     private $path;
     private $typology;
-    
+
 
     public function getId()
     {
@@ -38,14 +40,14 @@ class File {
     {
         return $this->path;
     }
- 
+
     public function setPath($path)
     {
         $this->path = $path;
 
         return $this;
     }
- 
+
     public function getTypology()
     {
         return $this->typology;

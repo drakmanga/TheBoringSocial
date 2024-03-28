@@ -1,8 +1,11 @@
 <?php
+
 namespace vagrant\TheBoringSocial\php\class;
 
-class Logout {
-    public static function logout() {
+class Logout
+{
+    public static function logout()
+    {
         session_unset();
         session_destroy();
 

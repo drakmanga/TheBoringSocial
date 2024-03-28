@@ -1,21 +1,22 @@
-body{
-    margin-top:20px;
+body {
+    margin-top: 20px;
     color: #1a202c;
     text-align: left;
-    background: #978e8ec2;  
+    background: #978e8ec2;
 }
 
 .myclassdrak {
     height: 115px;
     width: 115px;
-    object-fit: cover;    
+    object-fit: cover;
 }
 
 .main-body {
     padding: 15px;
 }
+
 .card {
-    box-shadow: 0 1px 3px 0 rgba(0,0,0,.1), 0 1px 2px 0 rgba(0,0,0,.06);
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
 }
 
 .card {
@@ -26,7 +27,7 @@ body{
     word-wrap: break-word;
     background-color: #fff;
     background-clip: border-box;
-    border: 0 solid rgba(0,0,0,.125);
+    border: 0 solid rgba(0, 0, 0, .125);
     border-radius: .25rem;
 }
 
@@ -41,47 +42,58 @@ body{
     margin-left: -8px;
 }
 
-.gutters-sm>.col, .gutters-sm>[class*=col-] {
+.gutters-sm>.col,
+.gutters-sm>[class*=col-] {
     padding-right: 8px;
     padding-left: 8px;
 }
-.mb-3, .my-3 {
-    margin-bottom: 1rem!important;
+
+.mb-3,
+.my-3 {
+    margin-bottom: 1rem !important;
 }
 
 .bg-gray-300 {
     background-color: #e2e8f0;
 }
+
 .h-100 {
-    height: 100%!important;
+    height: 100% !important;
 }
+
 .shadow-none {
-    box-shadow: none!important;
+    box-shadow: none !important;
 }
 
 .bg-white {
-    background-color: #fff!important;
+    background-color: #fff !important;
 }
+
 .btn-light {
     color: #1a202c;
     background-color: #fff;
     border-color: #cbd5e0;
 }
-.ml-2, .mx-2 {
-    margin-left: .5rem!important;
+
+.ml-2,
+.mx-2 {
+    margin-left: .5rem !important;
 }
 
 .card-footer:last-child {
     border-radius: 0 0 .25rem .25rem;
 }
-.card-footer, .card-header {
+
+.card-footer,
+.card-header {
     display: flex;
     align-items: center;
 }
+
 .card-footer {
     padding: .5rem 1rem;
     background-color: #fff;
-    border-top: 0 solid rgba(0,0,0,.125);
+    border-top: 0 solid rgba(0, 0, 0, .125);
 }
 
 .profile-header {
@@ -131,7 +143,6 @@ body{
 
 .profile-header-img img {
     max-width: 100%
-    
 }
 
 .profile-header-info h4 {
@@ -227,7 +238,7 @@ body{
 .t-plus-7,
 .t-plus-8,
 .t-plus-9 {
-    position: relative!important
+    position: relative !important
 }
 
 .profile-header .profile-header-tab {
@@ -241,7 +252,7 @@ body{
 
 .text-ellipsis,
 .text-nowrap {
-    white-space: nowrap!important
+    white-space: nowrap !important
 }
 
 .profile-header .profile-header-tab>li {
@@ -321,7 +332,7 @@ body{
 }
 
 .table.table-profile>thead>tr>th {
-    border-bottom: none!important
+    border-bottom: none !important
 }
 
 .table.table-profile>thead>tr>th h4 {
@@ -358,7 +369,7 @@ body{
 }
 
 .table.table-profile>tbody>tr.divider>td {
-    padding: 0!important;
+    padding: 0 !important;
     height: 10px
 }
 
@@ -466,27 +477,37 @@ body.flat-black {
 }
 
 .bg-white {
-    background-color: #fff!important;
+    background-color: #fff !important;
 }
+
 .p-10 {
-    padding: 10px!important;
+    padding: 10px !important;
 }
+
 .media.media-xs .media-object {
     width: 32px;
 }
+
 .m-b-2 {
-    margin-bottom: 2px!important;
+    margin-bottom: 2px !important;
 }
-.media>.media-left, .media>.pull-left {
+
+.media>.media-left,
+.media>.pull-left {
     padding-right: 15px;
 }
-.media-body, .media-left, .media-right {
+
+.media-body,
+.media-left,
+.media-right {
     display: table-cell;
     vertical-align: top;
 }
+
 select.form-control:not([size]):not([multiple]) {
     height: 34px;
 }
+
 .form-control.input-inline {
     display: inline;
     width: auto;
@@ -720,15 +741,18 @@ select.form-control:not([size]):not([multiple]) {
     line-height: 1.4;
 }
 
-.text-danger, .text-red {
-    color: #ff5b57!important;
+.text-danger,
+.text-red {
+    color: #ff5b57 !important;
 }
 
 .form-control-borderless {
     border: none;
 }
 
-.form-control-borderless:hover, .form-control-borderless:active, .form-control-borderless:focus {
+.form-control-borderless:hover,
+.form-control-borderless:active,
+.form-control-borderless:focus {
     border: none;
     outline: none;
     box-shadow: none;
