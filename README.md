@@ -1,4 +1,4 @@
-#The Boring Social
+# The Boring Social
 A complete social network that work propelly write all by me
 
 Hello!, This is my first autodidact project.
